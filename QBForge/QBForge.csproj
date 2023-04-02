@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		
+		<TargetFrameworks>net472;netstandard2.0;net6.0</TargetFrameworks>
+		
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		
+		<RootNamespace>QBForge</RootNamespace>
+		<AssemblyName>QBForge</AssemblyName>
+
+		<Title>QBForge</Title>
+		<PackageTags>query-builder;sql</PackageTags>
+		<Authors>Yaroslav Marochkin</Authors>
+		
+		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	
+	</PropertyGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net472' ">
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="MySql\" />
+	  <Folder Include="SqlLight\" />
+	  <Folder Include="SqlServer\" />
+	</ItemGroup>
+
+</Project>

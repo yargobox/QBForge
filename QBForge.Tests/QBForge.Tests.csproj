@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindows>
+		<IsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</IsLinux>
+		<IsOSX Condition="$([MSBuild]::IsOSPlatform('OSX'))">true</IsOSX>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(IsWindows)'=='true'">$(TargetFrameworks);net472</TargetFrameworks>
+		<StandardTargetFrameworks>netstandard2.0;netstandard2.1</StandardTargetFrameworks>
+		<StandardTargetFrameworks Condition="'$(IsWindows)'=='true'">$(StandardTargetFrameworks);net472</StandardTargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>10</LangVersion>
+		<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<!--<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>-->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Dapper" Version="2.0.123" />
+		<PackageReference Include="FluentAssertions" Version="6.10.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Moq" Version="4.18.4" />
+		<PackageReference Include="JunitXml.TestLogger" Version="3.0.124" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="Npgsql" Version="7.0.2" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="coverlet.collector" Version="3.2.0">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\QBForge\QBForge.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(IsWindows)'=='true'">
+		<DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsLinux)'=='true'">
+		<DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(IsOSX)'=='true'">
+		<DefineConstants>$(DefineConstants);MACOS</DefineConstants>
+	</PropertyGroup>
+
+</Project>
