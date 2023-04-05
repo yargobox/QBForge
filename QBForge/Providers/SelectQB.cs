@@ -20,9 +20,9 @@ namespace QBForge.Providers
 		public string ToString(out object? parameters, ReadabilityLevels level = ReadabilityLevels.Default)
 		{
 			var buildContent = _context.Provider.Build(this, _context.Provider.CreateBuildQueryContext(level));
-			var query = buildContent.Output.ToString();
+			var query = buildContent.ToString();
 			parameters = buildContent.Parameters;
-			return query;
+			return query!;
 		}
 
 		ISelectQB<T> ISelectQB<T>.Join<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label) => this;

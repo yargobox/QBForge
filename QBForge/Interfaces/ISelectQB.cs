@@ -6,15 +6,15 @@ namespace QBForge.Interfaces
 	public interface ISelectQB<T> : IQueryBuilder<T>
 	{
 #pragma warning disable CA1716
-		ISelectQB<T> IncludeAll(string? label = null);
-		ISelectQB<T> Include(Expression<Func<T, object?>> de, string? label = null);
-		ISelectQB<T> Include<TJoined>(Expression<Func<TJoined, object?>> de, string? label = null);
-		ISelectQB<T> Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? label = null);
-		ISelectQB<T> Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? label = null);
-		ISelectQB<T> Include(FuncCallClauseDe func, Expression<Func<T, object?>> deArg, string? label = null);
-		ISelectQB<T> Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> deArg, string? label = null);
-		ISelectQB<T> Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? label = null);
-		ISelectQB<T> Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? label = null);
+		ISelectQB<T> IncludeAll(string? tableLabel = null);
+		ISelectQB<T> Include(Expression<Func<T, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include<TJoined>(Expression<Func<TJoined, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include(FuncCallClauseDe func, Expression<Func<T, object?>> deArg, string? labelAs = null);
+		ISelectQB<T> Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> deArg, string? labelAs = null);
+		ISelectQB<T> Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs = null);
+		ISelectQB<T> Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? labelAs = null);
 
 		ISelectQB<T> Where(Action<ISelectQB<T>> parenthesized);
 		ISelectQB<T> OrWhere(Action<ISelectQB<T>> parenthesized);
@@ -33,16 +33,16 @@ namespace QBForge.Interfaces
 		ISelectQB<T> WhereExists<T2>(ISelectQB<T2> subQuery);
 		ISelectQB<T> WhereIn<T2>(ISelectQB<T2> subQuery);
 
-		ISelectQB<T> Join<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label);
-		ISelectQB<T> Join<TJoined>(string tableName, string? label = null);
-		ISelectQB<T> LeftJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label);
-		ISelectQB<T> LeftJoin<TJoined>(string tableName, string? label = null);
-		ISelectQB<T> RightJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label);
-		ISelectQB<T> RightJoin<TJoined>(string tableName, string? label = null);
-		ISelectQB<T> FullJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label);
-		ISelectQB<T> FullJoin<TJoined>(string tableName, string? label = null);
-		ISelectQB<T> CrossJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string label);
-		ISelectQB<T> CrossJoin<TJoined>(string tableName, string? label = null);
+		ISelectQB<T> Join<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
+		ISelectQB<T> Join<TJoined>(string tableName, string? labelAs = null);
+		ISelectQB<T> LeftJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
+		ISelectQB<T> LeftJoin<TJoined>(string tableName, string? labelAs = null);
+		ISelectQB<T> RightJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
+		ISelectQB<T> RightJoin<TJoined>(string tableName, string? labelAs = null);
+		ISelectQB<T> FullJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
+		ISelectQB<T> FullJoin<TJoined>(string tableName, string? labelAs = null);
+		ISelectQB<T> CrossJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
+		ISelectQB<T> CrossJoin<TJoined>(string tableName, string? labelAs = null);
 
 		ISelectQB<T> Distinct();
 

@@ -7,7 +7,7 @@
 
 		public DataEntry(string? label, string name)
 		{
-			Label = label;
+			Label = string.IsNullOrEmpty(label) ? null : label;
 			Name = name;
 		}
 	}

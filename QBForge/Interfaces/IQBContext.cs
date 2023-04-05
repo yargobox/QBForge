@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Data.Common;
+using QBForge.Interfaces.Clauses;
 
 namespace QBForge.Interfaces
 {
-	public interface IQBContext
+    public interface IQBContext
 	{
 		IQBContext Clone();
 

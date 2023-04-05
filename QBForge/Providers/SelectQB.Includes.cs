@@ -1,26 +1,57 @@
 ﻿using QBForge.Extensions.Linq.Expressions;
 using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using QBForge.Providers.Configuration;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace QBForge.Providers
 {
-	internal sealed partial class SelectQB<T>
+    internal sealed partial class SelectQB<T>
 	{
-		ISelectQB<T> ISelectQB<T>.IncludeAll(string? label)
+		ISelectQB<T> ISelectQB<T>.IncludeAll(string? tableLabel)
 		{
-			if (string.IsNullOrEmpty(label))
-				_context.SetClause(new TextClause(ClauseSections.Include, "*", "*"));
+			var key = IncludeClause.MakeKey(tableLabel, "*");
+
+			var dataEntry = new DataEntry(tableLabel, "*");
+
+			Clause includeClause = new DataEntryClouse(dataEntry);
+			if (includeClause.Key != key)
+			{
+				includeClause = new IncludeClause(key, includeClause);
+			}
+
+			var includeSection = _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Include);
+			if (includeSection == null)
+			{
+				_context.Clause.Add(new IncludeSectionClause() { includeClause });
+			}
+			else if (string.IsNullOrEmpty(tableLabel))
+			{
+				includeClause.Clauses!.Clear();
+				includeSection.Add(includeClause);
+			}
 			else
-				_context.SetClause(new TextClause(ClauseSections.Include, _context.MapNextTo + ".*", _context.Provider.AppendLabel(label!) + ".*"));
+			{
+				for (int i = 0; i < includeSection.Count; i++)
+				{
+					if (includeSection[i].Key == key)
+					{
+						includeSection.Clauses![i] = includeClause;
+						return this;
+					}
+				}
+
+				includeSection.Add(includeClause);
+			}
 
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include(Expression<Func<T, object?>> de, string? label)
+		ISelectQB<T> ISelectQB<T>.Include(Expression<Func<T, object?>> de, string? asLabel)
 		{
 			var (paramName, memberName) = de.GetMemberName(true);
 
@@ -35,13 +66,13 @@ namespace QBForge.Providers
 			else
 			{
 				var mappedName = _context.Provider.GetMappedName<T>(memberName);
-				SetIncludeClause(paramName, memberName, mappedName);
+				SetIncludeClause(paramName, memberName, mappedName, asLabel);
 			}
 
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(Expression<Func<TJoined, object?>> de, string? label)
+		ISelectQB<T> ISelectQB<T>.Include<TJoined>(Expression<Func<TJoined, object?>> de, string? asLabel)
 		{
 			var (paramName, memberName) = de.GetMemberName(true);
 
@@ -56,47 +87,64 @@ namespace QBForge.Providers
 			else
 			{
 				var mappedName = _context.Provider.GetMappedName<TJoined>(memberName);
-				SetIncludeClause(paramName, memberName, mappedName);
+				SetIncludeClause(paramName, memberName, mappedName, asLabel);
 			}
 
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDe func, Expression<Func<T, object?>> de, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDe func, Expression<Func<T, object?>> de, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> de, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? label) => this;
+		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? asLabel) => this;
 		
 
-		private void SetIncludeClause(string paramName, string memberName, string mappedName)
+		private void SetIncludeClause(string? tableLabel, string memberName, string mappedName, string? asLabel = null)
 		{
-			var sb = new StringBuilder();
-
-			if (paramName != "_")
+			if (string.IsNullOrEmpty(tableLabel) || tableLabel == "_")
 			{
-				_context.Provider.AppendLabel(sb, paramName);
-				sb.Append('.');
+				tableLabel = null;
+			}
+			if (string.IsNullOrEmpty(asLabel))
+			{
+				asLabel = memberName;
 			}
 
-			_context.Provider.AppendIdentifier(sb, mappedName);
+			var key = IncludeClause.MakeKey(_context.MapNextTo, asLabel!);
+			
+			var dataEntry = new DataEntry(tableLabel, mappedName);
 
-			if (memberName != mappedName)
+			Clause includeClause = new DataEntryClouse(dataEntry);
+			if (includeClause.Key != key || dataEntry.Name != asLabel)
 			{
-				sb.Append(' ');
-				_context.Provider.AppendAsLabel(sb, memberName);
+				includeClause = new IncludeClause(key, includeClause, asLabel);
 			}
 
-			var key = string.Concat(_context.MapNextTo, ".", memberName);
-			var arg = new DataEntry(paramName != "_" ? paramName : null, memberName);
+			var includeSection = _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Include);
+			if (includeSection == null)
+			{
+				_context.Clause.Add(new IncludeSectionClause() { includeClause });
+			}
+			else
+			{
+				for (int i = 0; i < includeSection.Count; i++)
+				{
+					if (includeSection[i].Key == key)
+					{
+						includeSection.Clauses![i] = includeClause;
+						return;
+					}
+				}
 
-			_context.SetClause(new TextClause(ClauseSections.Include, key, sb.ToString(), arg));
+				includeSection.Add(includeClause);
+			}
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using QBForge.Providers.Configuration;
 using System;
-using System.Text;
 
 namespace QBForge.PostgreSql
 {
@@ -15,25 +15,7 @@ namespace QBForge.PostgreSql
 
 			var qb = PostgreSqlConfig.Provider.CreateSelectQB<T>();
 
-			qb.Context.SetClause(new TextClause(ClauseSections.Select, null, "SELECT"));
-
-			var sb = new StringBuilder("FROM ");
-
-			if (!string.IsNullOrEmpty(schemaName))
-			{
-				qb.Context.Provider.AppendIdentifier(sb, schemaName!);
-				sb.Append('.');
-			}
-
-			qb.Context.Provider.AppendIdentifier(sb, objectName);
-
-			if (!string.IsNullOrEmpty(label))
-			{
-				sb.Append(' ');
-				qb.Context.Provider.AppendAsLabel(sb, label!);
-			}
-
-			qb.Context.SetClause(new TextClause(ClauseSections.From, null, sb.ToString()));//!!! parameters
+			qb.Context.Clause.Add(new FromSectionClause(new TableClouse(schemaName, objectName, label)));//!!! parameters
 
 			return qb;
 		}

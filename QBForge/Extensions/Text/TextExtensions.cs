@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QBForge.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -55,6 +56,101 @@ namespace QBForge.Extensions.Text
 				}
 			}
 			return sb;
+		}
+
+		internal static IRenderContext TryAppendCurrentIndent(this IRenderContext render, int indentCountAfterCurrent = 0)
+		{
+			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks | ReadabilityLevels.Indentation))
+			{
+				if (render.TabSize > 0)
+				{
+					render.Append(' ', render.TabSize * (render.CurrentIndent + indentCountAfterCurrent));
+				}
+				else
+				{
+					render.Append('\t', (render.CurrentIndent + indentCountAfterCurrent));
+				}
+			}
+
+			return render;
+		}
+		internal static IRenderContext AppendCurrentIndent(this IRenderContext render, int indentCountAfterCurrent = 0)
+		{
+			if (render.TabSize > 0)
+			{
+				render.Append(' ', render.TabSize * (render.CurrentIndent + indentCountAfterCurrent));
+			}
+			else
+			{
+				render.Append('\t', (render.CurrentIndent + indentCountAfterCurrent));
+			}
+
+			return render;
+		}
+
+		internal static IRenderContext TryAppendIndent(this IRenderContext render, int count = 1)
+		{
+			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks | ReadabilityLevels.Indentation))
+			{
+				if (render.TabSize > 0)
+				{
+					render.Append(' ', render.TabSize * count);
+				}
+				else
+				{
+					render.Append('\t', count);
+				}
+			}
+
+			return render;
+		}
+
+		internal static IRenderContext AppendIndent(this IRenderContext render, int count = 1)
+		{
+			if (render.TabSize > 0)
+			{
+				render.Append(' ', render.TabSize * count);
+			}
+			else
+			{
+				render.Append('\t', count);
+			}
+
+			return render;
+		}
+
+		internal static IRenderContext TryAppendLineOrAppendSpace(this IRenderContext render)
+		{
+			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks))
+			{
+				render.AppendLine();
+			}
+			else
+			{
+				render.Append(' ');
+			}
+
+			return render;
+		}
+
+		internal static IRenderContext TryAppendLine(this IRenderContext render)
+		{
+			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks))
+			{
+				render.AppendLine();
+			}
+
+			return render;
+		}
+
+		internal static IRenderContext TryAppendSpace(this IRenderContext render)
+		{
+			if (!render.Readability.HasFlag(ReadabilityLevels.AvoidSpaces))
+			{
+				render.Append(' ');
+			}
+
+			return render;
 		}
 	}
 }

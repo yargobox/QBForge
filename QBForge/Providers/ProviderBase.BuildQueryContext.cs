@@ -1,4 +1,5 @@
 ﻿using QBForge.Interfaces;
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -9,26 +10,48 @@ namespace QBForge.Providers
 		private sealed class BuildQueryContext : IBuildQueryContext, IRenderContext, ICondOperator, IAggrCall, IFuncCall, IOrderBy
 		{
 			public IQBProvider Provider { get; }
-			public ReadabilityLevels ReadabilityLevel { get; }
+			public ReadabilityLevels Readability { get; }
+			public int TabSize { get; }
+			public int CurrentIndent { get; set; }
 
 			public IRenderContext RenderContext => this;
-			public StringBuilder Output { get; }
+			private readonly StringBuilder _output;
 			
 			public int ParameterCount { get; private set; }
 			public object? Parameters { get; private set; }
 
-			public BuildQueryContext(IQBProvider provider, ReadabilityLevels level)
+			public BuildQueryContext(IQBProvider provider, ReadabilityLevels level, int tabSize)
 			{
+				if (level.HasFlag(ReadabilityLevels.Indentation) && !level.HasFlag(ReadabilityLevels.LineBreaks))
+				{
+					throw new ArgumentException($"Indentation cannot be used separately from line breaks.", nameof(level));
+				}
+				if (level.HasFlag(ReadabilityLevels.AvoidSpaces) && level.HasFlag(ReadabilityLevels.LineBreaks))
+				{
+					throw new ArgumentException($"Avoiding the use of white spaces means that line breaks cannot be used either.", nameof(level));
+				}
+
 				Provider = provider;
-				ReadabilityLevel = level;
-				Output = new StringBuilder();
+				Readability = level;
+				TabSize = tabSize;
+				_output = new StringBuilder();
 			}
 
-			public BuildQueryContext(IQBProvider provider, ReadabilityLevels level, StringBuilder output)
+			public BuildQueryContext(IQBProvider provider, ReadabilityLevels level, int tabSize, StringBuilder output)
 			{
+				if (level.HasFlag(ReadabilityLevels.Indentation) && !level.HasFlag(ReadabilityLevels.LineBreaks))
+				{
+					throw new ArgumentException($"Indentation cannot be used separately from line breaks.", nameof(level));
+				}
+				if (level.HasFlag(ReadabilityLevels.AvoidSpaces) && level.HasFlag(ReadabilityLevels.LineBreaks))
+				{
+					throw new ArgumentException($"Avoiding the use of white spaces means that line breaks cannot be used either.", nameof(level));
+				}
+
 				Provider = provider;
-				ReadabilityLevel = level;
-				Output = output;
+				Readability = level;
+				TabSize = tabSize;
+				_output = output;
 			}
 
 			public string MakeParamPlaceholder()
@@ -42,24 +65,30 @@ namespace QBForge.Providers
 
 			public override string ToString()
 			{
-				return Output.ToString();
+				return _output.ToString();
 			}
 
 			IRenderContext IRenderContext.Append(string text)
 			{
-				Output.Append(text);
+				_output.Append(text);
 				return this;
 			}
 
 			IRenderContext IRenderContext.Append(char ch)
 			{
-				Output.Append(ch);
+				_output.Append(ch);
+				return this;
+			}
+
+			IRenderContext IRenderContext.Append(char ch, int repeatCount)
+			{
+				_output.Append(ch, repeatCount);
 				return this;
 			}
 
 			IRenderContext IRenderContext.AppendLine()
 			{
-				Output.AppendLine();
+				_output.AppendLine();
 				return this;
 			}
 
@@ -67,28 +96,28 @@ namespace QBForge.Providers
 			{
 				if (!string.IsNullOrEmpty(de.Label))
 				{
-					Provider.AppendLabel(Output, de.Label!, ReadabilityLevel);
-					Output.Append('.');
+					Provider.AppendLabel(_output, de.Label!, Readability);
+					_output.Append('.');
 				}
-				Provider.AppendIdentifier(Output, de.Name, ReadabilityLevel);
+				Provider.AppendIdentifier(_output, de.Name, Readability);
 				return this;
 			}
 
-			IRenderContext IRenderContext.AppendIdentifier(string identifier)
+			IRenderContext IRenderContext.AppendObject(string objectName)
 			{
-				Provider.AppendIdentifier(Output, identifier, ReadabilityLevel);
+				Provider.AppendIdentifier(_output, objectName, Readability);
 				return this;
 			}
 
 			IRenderContext IRenderContext.AppendLabel(string label)
 			{
-				Provider.AppendLabel(Output, label, ReadabilityLevel);
+				Provider.AppendLabel(_output, label, Readability);
 				return this;
 			}
 
 			IRenderContext IRenderContext.AppendAsLabel(string label)
 			{
-				Provider.AppendAsLabel(Output, label, ReadabilityLevel);
+				Provider.AppendAsLabel(_output, label, Readability);
 				return this;
 			}
 		}

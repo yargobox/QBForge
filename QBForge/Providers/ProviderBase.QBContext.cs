@@ -1,4 +1,5 @@
 ﻿using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using QBForge.Providers.Configuration;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace QBForge.Providers
 {
-	internal partial class ProviderBase
+    internal partial class ProviderBase
 	{
 		private class QBContext : IQBContext
 		{

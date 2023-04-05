@@ -5,7 +5,7 @@ namespace QBForge.Providers
 {
 	internal partial class PostgreSqlProvider
 	{
-		public override string AppendIdentifier(string identifier, ReadabilityLevels level = ReadabilityLevels.Default)
+		public override string AppendIdentifier(string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
 		{
 			if (level == ReadabilityLevels.Default)
 			{
@@ -14,16 +14,16 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedIdentifiers))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(identifier) && !IsKnownKeyword(identifier))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(objectName) && !IsQuotedKeyword(objectName))
 				{
-					return identifier;
+					return objectName;
 				}
 			}
 
-			return string.Concat("\"", identifier.Replace("\"", "\"\""), "\"");
+			return string.Concat("\"", objectName.Replace("\"", "\"\""), "\"");
 		}
 
-		public override void AppendIdentifier(StringBuilder sb, string identifier, ReadabilityLevels level = ReadabilityLevels.Default)
+		public override void AppendIdentifier(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
 		{
 			if (level == ReadabilityLevels.Default)
 			{
@@ -32,14 +32,14 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedIdentifiers))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(identifier) && !IsKnownKeyword(identifier))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(objectName) && !IsQuotedKeyword(objectName))
 				{
-					sb.Append(identifier);
+					sb.Append(objectName);
 					return;
 				}
 			}
 
-			sb.Append('"').Append(identifier.Replace("\"", "\"\"")).Append('"');
+			sb.Append('"').Append(objectName.Replace("\"", "\"\"")).Append('"');
 		}
 
 		public override string AppendLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default)
@@ -51,7 +51,7 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedLabels))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsKnownKeyword(label))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsQuotedKeyword(label))
 				{
 					return label;
 				}
@@ -69,7 +69,7 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedLabels))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsKnownKeyword(label))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsQuotedKeyword(label))
 				{
 					sb.Append(label);
 					return;
@@ -88,7 +88,7 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedLabels))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsKnownKeyword(label))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsQuotedKeyword(label))
 				{
 					if (level.HasFlag(ReadabilityLevels.AvoidAsKeyword))
 					{
@@ -121,7 +121,7 @@ namespace QBForge.Providers
 
 			if (level.HasFlag(ReadabilityLevels.AvoidQuotedLabels))
 			{
-				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsKnownKeyword(label))
+				if (ContainsOnlyLowercaseLatinOrNumbersOrUnderscore(label) && !IsQuotedKeyword(label))
 				{
 					sb.Append(label);
 					return;

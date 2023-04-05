@@ -1,4 +1,5 @@
 ﻿using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using QBForge.Providers.Configuration;
 using System;
 using System.Globalization;

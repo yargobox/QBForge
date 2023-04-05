@@ -3,13 +3,16 @@
 	public interface IRenderContext
 	{
 		IQBProvider Provider { get; }
-		ReadabilityLevels ReadabilityLevel { get; }
+		ReadabilityLevels Readability { get; }
+		int TabSize { get; }
+		int CurrentIndent { get; set; }
 
 		IRenderContext Append(string text);
 		IRenderContext Append(char ch);
+		IRenderContext Append(char ch, int repeatCount);
 		IRenderContext AppendLine();
 		IRenderContext Append(DataEntry de);
-		IRenderContext AppendIdentifier(string identifier);
+		IRenderContext AppendObject(string objectName);
 		IRenderContext AppendLabel(string label);
 		IRenderContext AppendAsLabel(string label);
 	}

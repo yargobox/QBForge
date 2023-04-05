@@ -1,10 +1,11 @@
-﻿using QBForge.Providers.Configuration;
+﻿using QBForge.Interfaces.Clauses;
+using QBForge.Providers.Configuration;
 using System.Collections.Generic;
 using System.Text;
 
 namespace QBForge.Interfaces
 {
-	public interface IQBProvider
+    public interface IQBProvider
 	{
 		/// <summary>
 		/// Provider name
@@ -41,14 +42,15 @@ namespace QBForge.Interfaces
 		// Build
 		//
 
-		IBuildQueryContext CreateBuildQueryContext(ReadabilityLevels level = ReadabilityLevels.Default);
+		IBuildQueryContext CreateBuildQueryContext(ReadabilityLevels level = ReadabilityLevels.Default, int tabSize = 0);
 		IBuildQueryContext Build<T>(ISelectQB<T> queryBuilder, IBuildQueryContext? context = null);
+		bool Render(Clause clause, IBuildQueryContext context);
 
 		// Syntax
 		//
 
-		string AppendIdentifier(string identifier, ReadabilityLevels level = ReadabilityLevels.Default);
-		void AppendIdentifier(StringBuilder sb, string identifier, ReadabilityLevels level = ReadabilityLevels.Default);
+		string AppendIdentifier(string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
+		void AppendIdentifier(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
 		string AppendLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		void AppendLabel(StringBuilder sb, string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		string AppendAsLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);
