@@ -1,25 +1,28 @@
 ﻿namespace QBForge.Interfaces.Clauses
 {
-	public class DataEntryClouse : ConstClause
+	public class DataEntryClouse : ValueClause<DataEntry>
 	{
-		public override string? Key => DataEntry.Name;
-		public DataEntry DataEntry { get; }
+		public override string? Key => Value.Name;
 
-		public DataEntryClouse(DataEntry de)
-		{
-			DataEntry = de;
-		}
+		public DataEntryClouse(DataEntry de) : base(de) { }
 
 		public override void Render(IBuildQueryContext context)
 		{
 			var render = context.RenderContext;
 
-			if (!string.IsNullOrEmpty(DataEntry.Label))
+			if (!string.IsNullOrEmpty(Value.RefLabel))
 			{
-				render.AppendLabel(DataEntry.Label!);
+				render.AppendLabel(Value.RefLabel!);
 				render.Append('.');
 			}
-			render.AppendObject(DataEntry.Name);
+			render.AppendObject(Value.Name);
+		}
+
+		public override string ToString()
+		{
+			return string.IsNullOrEmpty(Value.RefLabel)
+				? Value.Name
+				: string.Concat(Value.RefLabel!, ".", Value.Name);
 		}
 	}
 }

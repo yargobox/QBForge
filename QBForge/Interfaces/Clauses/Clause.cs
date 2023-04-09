@@ -1,12 +1,17 @@
-﻿using System;
+﻿using QBForge.Providers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace QBForge.Interfaces.Clauses
 {
+	[DebuggerDisplay("Clause = {ToString()}, Key = {Key}")]
 	public abstract class Clause : IReadOnlyList<Clause>
 	{
+		public static Clause Empty => StaticEmptyClause.Empty;
+
 		public virtual string? Key { get; }
 
 		public virtual int Count => Clauses?.Count ?? 0;
@@ -21,27 +26,53 @@ namespace QBForge.Interfaces.Clauses
 
 		public virtual IEnumerator<Clause> GetEnumerator() => (Clauses ?? Enumerable.Empty<Clause>()).GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public override string ToString()
+		{
+			var context = ProviderBase.Default.CreateBuildQueryContext(ReadabilityLevels.High);
+			Render(context);
+			return context.ToString();
+		}
+
+		private static class StaticEmptyClause
+		{
+			static StaticEmptyClause() { }
+
+			public static readonly Clause Empty = new EmptyClause();
+
+			private sealed class EmptyClause : Clause
+			{
+				public override void Render(IBuildQueryContext context) { }
+			}
+		}
 	}
 
-	public abstract class ConstClause : Clause
+	public abstract class TextClause : Clause
 	{
+	}
+
+	public abstract class ValueClause<T> : Clause
+	{
+		public T Value { get; }
+
+		public ValueClause(T value) => Value = value;
 	}
 
 	public abstract class UnaryClause : Clause
 	{
 		public sealed override int Count => 1;
-		public Clause Clause { get; }
+		public Clause Left { get; }
 
 		public UnaryClause(Clause clause)
 		{
-			Clause = clause;
+			Left = clause;
 		}
 
-		public sealed override Clause this[int index] => index == 0 ? Clause : throw new ArgumentOutOfRangeException(nameof(index));
+		public sealed override Clause this[int index] => index == 0 ? Left : throw new ArgumentOutOfRangeException(nameof(index));
 
 		public sealed override IEnumerator<Clause> GetEnumerator()
 		{
-			yield return Clause;
+			yield return Left;
 		}
 	}
 

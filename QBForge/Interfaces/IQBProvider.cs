@@ -1,5 +1,6 @@
 ﻿using QBForge.Interfaces.Clauses;
 using QBForge.Providers.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,23 +35,34 @@ namespace QBForge.Interfaces
 		string GetMappedName<T>(string name);
 
 		/// <summary>
-		/// Get mapping information for the document type <typeparamref name="T"/>
+		/// Get a database name of the property <paramref name="name"/> of the document <paramref name="documentType"/>
+		/// </summary>
+		string GetMappedName(Type documentType, string name);
+
+		/// <summary>
+		/// Get mapping information for the specified document <typeparamref name="T"/>
 		/// </summary>
 		/// <returns><see cref="MemberMappingInfo"/> by property names</returns>
 		IReadOnlyDictionary<string, MemberMappingInfo> GetMappingInfo<T>();
+
+		/// <summary>
+		/// Get mapping information for the specified document <paramref name="documentType"/>
+		/// </summary>
+		/// <returns><see cref="MemberMappingInfo"/> by property names</returns>
+		IReadOnlyDictionary<string, MemberMappingInfo> GetMappingInfo(Type documentType);
 
 		// Build
 		//
 
 		IBuildQueryContext CreateBuildQueryContext(ReadabilityLevels level = ReadabilityLevels.Default, int tabSize = 0);
-		IBuildQueryContext Build<T>(ISelectQB<T> queryBuilder, IBuildQueryContext? context = null);
+		IBuildQueryContext Build(IQueryBuilder queryBuilder, IBuildQueryContext? context = null);
 		bool Render(Clause clause, IBuildQueryContext context);
 
 		// Syntax
 		//
 
-		string AppendIdentifier(string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
-		void AppendIdentifier(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
+		string AppendObject(string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
+		void AppendObject(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
 		string AppendLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		void AppendLabel(StringBuilder sb, string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		string AppendAsLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);

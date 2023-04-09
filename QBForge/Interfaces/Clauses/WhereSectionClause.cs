@@ -9,7 +9,7 @@ namespace QBForge.Interfaces.Clauses
 		public override void Render(IBuildQueryContext context)
 		{
 			context.RenderContext
-				.Append("WHERE").TryAppendLineOrAppendSpace()
+				.TryAppendCurrentIndent().Append("WHERE").TryAppendLineOrAppendSpace()
 				.TryAppendCurrentIndent(1);
 
 			foreach (var clause in this)

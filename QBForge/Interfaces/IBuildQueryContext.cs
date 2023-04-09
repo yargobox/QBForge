@@ -8,7 +8,5 @@ namespace QBForge.Interfaces
 
 		int ParameterCount { get; }
 		object? Parameters { get; }
-
-		string MakeParamPlaceholder();
 	}
 }

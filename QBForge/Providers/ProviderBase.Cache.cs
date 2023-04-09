@@ -13,16 +13,26 @@ namespace QBForge.Providers
 
 		public string GetMappedName<T>(string name)
 		{
-			return GetMappingInfo<T>()[name].MappedName;
+			return GetMappedName(typeof(T), name);
+		}
+
+		public string GetMappedName(Type documentType, string name)
+		{
+			return GetMappingInfo(documentType)[name].MappedName;
 		}
 
 		public IReadOnlyDictionary<string, MemberMappingInfo> GetMappingInfo<T>()
 		{
-			return _mappingCache.GetOrAdd(typeof(T), x => GetInfo());
+			return GetMappingInfo(typeof(T));
+		}
+
+		public IReadOnlyDictionary<string, MemberMappingInfo> GetMappingInfo(Type documentType)
+		{
+			return _mappingCache.GetOrAdd(documentType, x => GetInfo());
 
 			IReadOnlyDictionary<string, MemberMappingInfo> GetInfo()
 			{
-				var mappingInfo = Mapping.GetDocumentMappingInfo<T>();
+				var mappingInfo = Mapping.GetDocumentMappingInfo(documentType);
 				return mappingInfo.AsOrderedReadOnlyDictionary(mi => mi.Name, null, mappingInfo.Count >= 8);
 			}
 		}

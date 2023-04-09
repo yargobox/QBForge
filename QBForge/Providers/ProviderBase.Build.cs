@@ -1,21 +1,16 @@
-﻿using QBForge.Extensions.Text;
-using QBForge.Interfaces;
+﻿using QBForge.Interfaces;
 using QBForge.Interfaces.Clauses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace QBForge.Providers
 {
-    internal partial class ProviderBase : IQBProvider
+	internal partial class ProviderBase : IQBProvider
 	{
 		public virtual IBuildQueryContext CreateBuildQueryContext(ReadabilityLevels level = ReadabilityLevels.Default, int tabSize = 0)
 		{
 			return new BuildQueryContext(this, level, 0);
 		}
 
-		public virtual IBuildQueryContext Build<T>(ISelectQB<T> queryBuilder, IBuildQueryContext? context = null)
+		public virtual IBuildQueryContext Build(IQueryBuilder queryBuilder, IBuildQueryContext? context = null)
 		{
 			context ??= CreateBuildQueryContext();
 

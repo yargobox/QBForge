@@ -5,7 +5,7 @@ namespace QBForge.Providers
 {
 	internal partial class PostgreSqlProvider
 	{
-		public override string AppendIdentifier(string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
+		public override string AppendObject(string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
 		{
 			if (level == ReadabilityLevels.Default)
 			{
@@ -23,7 +23,7 @@ namespace QBForge.Providers
 			return string.Concat("\"", objectName.Replace("\"", "\"\""), "\"");
 		}
 
-		public override void AppendIdentifier(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
+		public override void AppendObject(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default)
 		{
 			if (level == ReadabilityLevels.Default)
 			{

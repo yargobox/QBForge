@@ -2,12 +2,12 @@
 {
 	public readonly record struct DataEntry
 	{
-		public readonly string? Label { get; }
+		public readonly string? RefLabel { get; }
 		public readonly string Name { get; }
 
 		public DataEntry(string? label, string name)
 		{
-			Label = string.IsNullOrEmpty(label) ? null : label;
+			RefLabel = string.IsNullOrEmpty(label) ? null : label;
 			Name = name;
 		}
 	}

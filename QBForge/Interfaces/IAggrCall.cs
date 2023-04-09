@@ -2,6 +2,6 @@
 {
 	public interface IAggrCall : IRenderContext { }
 
-	public delegate IAggrCall AggrCallClauseDe(IAggrCall query, DataEntry arg);
+	public delegate IAggrCall AggrCallClauseDe(IAggrCall render, DataEntry arg);
 
 }

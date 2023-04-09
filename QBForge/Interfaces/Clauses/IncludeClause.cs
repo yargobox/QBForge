@@ -15,7 +15,7 @@
 		{
 			var render = context.RenderContext;
 
-			Clause.Render(context);
+			Left.Render(context);
 			if (!string.IsNullOrEmpty(LabelAs))
 			{
 				render.Append(' ');
@@ -26,6 +26,13 @@
 		public static string MakeKey(string? tableLabel, string nameOrLabelAs)
 		{
 			return string.IsNullOrEmpty(tableLabel) ? nameOrLabelAs : string.Concat(tableLabel, "\b", nameOrLabelAs);
+		}
+
+		public override string ToString()
+		{
+			return string.IsNullOrEmpty(LabelAs)
+				? Left.ToString()
+				: string.Concat(Left.ToString(), " AS ", LabelAs!);
 		}
 	}
 }

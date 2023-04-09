@@ -1,9 +1,6 @@
 ﻿using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Globalization;
 using System.Text;
 
 namespace QBForge.Extensions.Text
@@ -151,6 +148,28 @@ namespace QBForge.Extensions.Text
 			}
 
 			return render;
+		}
+
+		internal static IRenderContext AppendArgument(this IRenderContext query, Clause arg)
+		{
+			if (arg is DataEntryClouse dataEntryClause)
+			{
+				query.Append(dataEntryClause.Value);
+			}
+			else if (arg is ParameterClouse parameterClause)
+			{
+				query.Append(query.MakeParamPlaceholder(parameterClause.Value));
+			}
+			else if (arg is null)
+			{
+				throw new ArgumentNullException(nameof(arg));
+			}
+			else
+			{
+				throw new ArgumentException($"{arg?.GetType().FullName} is not supported", nameof(arg));
+			}
+
+			return query;
 		}
 	}
 }

@@ -21,7 +21,5 @@ namespace QBForge.Interfaces
 		Delegate? Map { get; set; }
 
 		object? Tag { get; set; }
-
-		void SetClause(ClauseEntry clause);
 	}
 }

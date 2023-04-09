@@ -54,7 +54,7 @@ namespace QBForge.Providers
 				_output = output;
 			}
 
-			public string MakeParamPlaceholder()
+			public string MakeParamPlaceholder(object? parameter)//!!!
 			{
 				ParameterCount++;
 
@@ -94,18 +94,18 @@ namespace QBForge.Providers
 
 			IRenderContext IRenderContext.Append(DataEntry de)
 			{
-				if (!string.IsNullOrEmpty(de.Label))
+				if (!string.IsNullOrEmpty(de.RefLabel))
 				{
-					Provider.AppendLabel(_output, de.Label!, Readability);
+					Provider.AppendLabel(_output, de.RefLabel!, Readability);
 					_output.Append('.');
 				}
-				Provider.AppendIdentifier(_output, de.Name, Readability);
+				Provider.AppendObject(_output, de.Name, Readability);
 				return this;
 			}
 
 			IRenderContext IRenderContext.AppendObject(string objectName)
 			{
-				Provider.AppendIdentifier(_output, objectName, Readability);
+				Provider.AppendObject(_output, objectName, Readability);
 				return this;
 			}
 

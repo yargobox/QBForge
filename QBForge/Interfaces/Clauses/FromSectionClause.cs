@@ -14,7 +14,12 @@ namespace QBForge.Interfaces.Clauses
 				.TryAppendCurrentIndent().Append("FROM").TryAppendLineOrAppendSpace()
 				.TryAppendCurrentIndent(1);
 
-			Clause.Render(context);
+			Left.Render(context);
+		}
+
+		public override string ToString()
+		{
+			return "FROM " + Left.ToString();
 		}
 	}
 }

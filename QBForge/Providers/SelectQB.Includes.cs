@@ -10,7 +10,7 @@ using System.Text;
 
 namespace QBForge.Providers
 {
-    internal sealed partial class SelectQB<T>
+    internal partial class SelectQB<T>
 	{
 		ISelectQB<T> ISelectQB<T>.IncludeAll(string? tableLabel)
 		{

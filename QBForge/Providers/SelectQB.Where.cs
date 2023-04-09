@@ -1,41 +1,119 @@
 ﻿using QBForge.Extensions.Linq.Expressions;
 using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace QBForge.Providers
 {
 	internal partial class SelectQB<T>
 	{
-		ISelectQB<T> ISelectQB<T>.Where(Action<ISelectQB<T>> parenthesized) => this;
-		ISelectQB<T> ISelectQB<T>.OrWhere(Action<ISelectQB<T>> parenthesized) => this;
+		ISelectQB<T> ISelectQB<T>.Where(Action<ISelectQB<T>> parenthesize)
+			=> AddWhereCond(false, parenthesize);
 
-		ISelectQB<T> ISelectQB<T>.Where(Expression<Func<T, object?>> lhs, CondOperatorDe op)
+		ISelectQB<T> ISelectQB<T>.OrWhere(Action<ISelectQB<T>> parenthesize)
+			=> AddWhereCond(true, parenthesize);
+
+		ISelectQB<T> ISelectQB<T>.Where(Expression<Func<T, object?>> lhs, UnaryOperator op)
+			=> AddWhereCond(false, new UnaryHandlerClause(op, lhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere(Expression<Func<T, object?>> lhs, UnaryOperator op)
+			=> AddWhereCond(true, new UnaryHandlerClause(op, lhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op)
+			=> AddWhereCond(false, new UnaryHandlerClause(op, lhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op)
+			=> AddWhereCond(true, new UnaryHandlerClause(op, lhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs)
+			=> AddWhereCond(false, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs)
+			=> AddWhereCond(true, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs));
+
+		ISelectQB<T> ISelectQB<T>.Where(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs)
+			=> AddWhereCond(false, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs)
+			=> AddWhereCond(true, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs));
+
+		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
+			=> AddWhereCond(false, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
+			=> AddWhereCond(true, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.Where<T2, T3>(Expression<Func<T3, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs)
+			=> AddWhereCond(false, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere<T2, T3>(Expression<Func<T3, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs)
+			=> AddWhereCond(true, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs.ToDataEntry()));
+
+		ISelectQB<T> ISelectQB<T>.Where<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
+			=> AddWhereCond(false, new UnaryHandlerClause(op, new SubQueryClause(subQuery)));
+
+		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
+			=> AddWhereCond(true, new UnaryHandlerClause(op, new SubQueryClause(subQuery)));
+
+		private ISelectQB<T> AddWhereCond(bool or, Clause right, Clause? whereSection = null)
 		{
-			_context.SetClause(new ClauseDe(ClauseSections.Where, null, op, lhs.ToDataEntry()));
+			whereSection ??= _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Where);
+			if (whereSection == null)
+			{
+				_context.Clause.Add(whereSection = new WhereSectionClause());
+			}
+
+			if (whereSection.Count > 0)
+			{
+				var left = whereSection.Clauses![whereSection.Count - 1];
+
+				if (object.ReferenceEquals(left, Clause.Empty))
+				{
+					whereSection.Clauses![whereSection.Count - 1] = right;
+				}
+				else
+				{
+					whereSection.Clauses![whereSection.Count - 1] = or
+						? new OrAlsoClause(left, right)
+						: new AndAlsoClause(left, right);
+				}
+			}
+			else
+			{
+				whereSection.Add(right);
+			}
+
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.OrWhere(Expression<Func<T, object?>> lhs, CondOperatorDe op) => this;
-		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDe op)
+		private ISelectQB<T> AddWhereCond(bool or, Action<ISelectQB<T>> parenthesized)
 		{
-			_context.SetClause(new ClauseDe(ClauseSections.Where, null, op, lhs.ToDataEntry()));
+			var whereSection = _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Where);
+			if (whereSection == null)
+			{
+				_context.Clause.Add(whereSection = new WhereSectionClause());
+			}
+
+			// add Empty to the end
+			whereSection.Add(Clause.Empty);
+
+			// Empty will be replaced with the parenthesized condition (the Right one)
+			parenthesized(this);
+
+			// The last one must be our Right instead of Empty
+			var right = whereSection.Clauses![whereSection.Count - 1];
+			// remove it
+			whereSection.Clauses.RemoveAt(whereSection.Count - 1);
+
+			if (!object.ReferenceEquals(right, Clause.Empty))
+			{
+				AddWhereCond(or, right, whereSection);
+			}
+
 			return this;
 		}
-		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDe op) => this;
-		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeV op, dynamic rhs)
-		{
-			_context.SetClause(new ClauseDeV(ClauseSections.Where, null, op, lhs.ToDataEntry(), rhs));
-			return this;
-		}
-		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeV op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.Where(Expression<Func<T, object?>> lhs, CondOperatorDeV op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrWhere(Expression<Func<T, object?>> lhs, CondOperatorDeV op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.Where<T2, T3>(Expression<Func<T3, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrWhere<T2, T3>(Expression<Func<T3, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.WhereExists<T2>(ISelectQB<T2> subQuery) => this;
-		ISelectQB<T> ISelectQB<T>.WhereIn<T2>(ISelectQB<T2> subQuery) => this;
 	}
 }

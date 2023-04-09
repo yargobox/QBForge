@@ -1,4 +1,6 @@
-﻿namespace QBForge.Interfaces
+﻿using QBForge.Interfaces.Clauses;
+
+namespace QBForge.Interfaces
 {
 	public interface IRenderContext
 	{
@@ -6,6 +8,8 @@
 		ReadabilityLevels Readability { get; }
 		int TabSize { get; }
 		int CurrentIndent { get; set; }
+
+		string MakeParamPlaceholder(object? parameter);
 
 		IRenderContext Append(string text);
 		IRenderContext Append(char ch);

@@ -129,11 +129,11 @@ namespace QBForge.Providers.Configuration
 			return mapAs;
 		}
 
-		public List<MemberMappingInfo> GetDocumentMappingInfo<T>()
+		public List<MemberMappingInfo> GetDocumentMappingInfo(Type documentType)
 		{
 			List<MemberMappingInfo> list = new();
 
-			foreach (var memberInfo in GetAllMembers(typeof(T)))
+			foreach (var memberInfo in GetAllMembers(documentType))
 			{
 				var type = memberInfo is PropertyInfo pi
 					? pi.PropertyType

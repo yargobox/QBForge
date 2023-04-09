@@ -18,20 +18,20 @@ namespace QBForge.Interfaces
 
 		ISelectQB<T> Where(Action<ISelectQB<T>> parenthesized);
 		ISelectQB<T> OrWhere(Action<ISelectQB<T>> parenthesized);
-		ISelectQB<T> Where(Expression<Func<T, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> OrWhere(Expression<Func<T, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> Where(Expression<Func<T, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> OrWhere(Expression<Func<T, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> Where<T2, T3>(Expression<Func<T3, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs);
-		ISelectQB<T> OrWhere<T2, T3>(Expression<Func<T3, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs);
-		ISelectQB<T> WhereExists<T2>(ISelectQB<T2> subQuery);
-		ISelectQB<T> WhereIn<T2>(ISelectQB<T2> subQuery);
+		ISelectQB<T> Where(Expression<Func<T, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrWhere(Expression<Func<T, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Where(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrWhere(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> OrWhere<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> Where<T2, T3>(Expression<Func<T3, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
+		ISelectQB<T> OrWhere<T2, T3>(Expression<Func<T3, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
+		ISelectQB<T> Where<T2>(UnaryOperator op, ISelectQB<T2> subQuery);
+		ISelectQB<T> OrWhere<T2>(UnaryOperator op, ISelectQB<T2> subQuery);
 
 		ISelectQB<T> Join<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
 		ISelectQB<T> Join<TJoined>(string tableName, string? labelAs = null);
@@ -54,15 +54,15 @@ namespace QBForge.Interfaces
 		ISelectQB<T> ExceptAll(ISelectQB<T> query);
 
 		ISelectQB<T> On(Action<ISelectQB<T>> parenthesized);
-		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> On<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs);
+		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> On<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
 		ISelectQB<T> OrOn(Action<ISelectQB<T>> parenthesized);
-		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDe op);
-		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeDe op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> OrOn<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, CondOperatorDeDe op, Expression<Func<T2, object?>> rhs);
+		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> OrOn<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
 
 		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, OrderByClauseDe? ob = null);
 		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByClauseDe? ob = null);
@@ -70,8 +70,8 @@ namespace QBForge.Interfaces
 		ISelectQB<T> GroupBy(Expression<Func<T, object?>> lhs);
 		ISelectQB<T> GroupBy<T2>(Expression<Func<T2, object?>> lhs);
 
-		ISelectQB<T> Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, CondOperatorDeV op, dynamic rhs);
-		ISelectQB<T> Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, CondOperatorDeV op, dynamic rhs);
+		ISelectQB<T> Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
 
 		ISelectQB<T> Skip(long offset, string? @label = null);
 		ISelectQB<T> Take(int limit, string? @label = null);

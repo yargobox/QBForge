@@ -8,8 +8,8 @@ namespace QBForge.Providers
 	{
 		public ReadabilityLevels DefaultReadabilityLevel { get; set; }
 
-		public abstract string AppendIdentifier(string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
-		public abstract void AppendIdentifier(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
+		public abstract string AppendObject(string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
+		public abstract void AppendObject(StringBuilder sb, string objectName, ReadabilityLevels level = ReadabilityLevels.Default);
 		public abstract string AppendLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		public abstract void AppendLabel(StringBuilder sb, string label, ReadabilityLevels level = ReadabilityLevels.Default);
 		public abstract string AppendAsLabel(string label, ReadabilityLevels level = ReadabilityLevels.Default);
