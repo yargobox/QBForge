@@ -26,7 +26,11 @@ namespace QBForge.Tests
 				.LeftJoin<Brand>("brands", "b")
 					.On<Brand>(b => b.BrandId, Op.Equal, p => p.BrandId)
 				.Where(_ => _.Where(p => p.Price, Op.Greater, 12.00).Where(p => p.Price, Op.Less, 100.00)).OrWhere(p => p.Price, Op.IsNull)
-				.OrderBy(p => p.ProductId)
+				.OrderBy(p => p.Price)
+				.OrderBy(p => p.Price, Ob.DESC)
+				.OrderBy<Brand>(b => b.Name, Ob.ASC)
+				.GroupBy(p => p.Price)
+				.GroupBy<Brand>(b => b.Name)
 				.Where(Op.Exists, QB.Select<Brand>("brands", "b").Where(b => b.BrandId, Op.IsNotNull))
 
 				.Map<Category, Brand>((p, c, b) => { p.Category = c; p.Brand = b; return p; })

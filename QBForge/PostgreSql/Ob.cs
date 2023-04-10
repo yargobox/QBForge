@@ -1,22 +1,24 @@
-﻿using QBForge.Interfaces;
+﻿using QBForge.Extensions.Text;
+using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 
 namespace QBForge.PostgreSql
 {
 	public static class Ob
 	{
-		public static IOrderBy ASC(this IOrderBy query, DataEntry arg)
+		public static IOrderByRender ASC(this IOrderByRender query, Clause arg)
 		{
-			query.Append(arg); return query;
-		}
-		
-		public static IOrderBy DESC(this IOrderBy query, DataEntry arg)
-		{
-			query.Append(arg).Append(" DESC"); return query;
+			query.AppendArgument(arg).Append(" ASC"); return query;
 		}
 
-		public static IOrderBy RANK(this IOrderBy query, DataEntry arg)
+		public static IOrderByRender DESC(this IOrderByRender query, Clause arg)
 		{
-			query.Append(arg).Append(" RANK"); return query;
+			query.AppendArgument(arg).Append(" DESC"); return query;
+		}
+
+		public static IOrderByRender RANK(this IOrderByRender query, Clause arg)
+		{
+			query.AppendArgument(arg).Append(" RANK"); return query;
 		}
 	}
 }

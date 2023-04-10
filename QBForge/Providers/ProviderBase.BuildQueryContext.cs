@@ -7,7 +7,7 @@ namespace QBForge.Providers
 {
 	internal partial class ProviderBase
 	{
-		private sealed class BuildQueryContext : IBuildQueryContext, IRenderContext, ICondOperator, IAggrCall, IFuncCall, IOrderBy
+		private sealed class BuildQueryContext : IBuildQueryContext, IRenderContext, ICondOperator, IAggrCall, IFuncCall, IOrderByRender
 		{
 			public IQBProvider Provider { get; }
 			public ReadabilityLevels Readability { get; }

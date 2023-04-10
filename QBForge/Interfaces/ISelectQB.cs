@@ -69,8 +69,8 @@ namespace QBForge.Interfaces
 		ISelectQB<T> On<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
 		ISelectQB<T> OrOn<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
 
-		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, OrderByClauseDe? ob = null);
-		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByClauseDe? ob = null);
+		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, OrderByHandler? ob = null);
+		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByHandler? ob = null);
 
 		ISelectQB<T> GroupBy(Expression<Func<T, object?>> lhs);
 		ISelectQB<T> GroupBy<T2>(Expression<Func<T2, object?>> lhs);

@@ -40,12 +40,6 @@ namespace QBForge.Providers
 		ISelectQB<T> ISelectQB<T>.Except(ISelectQB<T> query) => this;
 		ISelectQB<T> ISelectQB<T>.ExceptAll(ISelectQB<T> query) => this;
 
-		ISelectQB<T> ISelectQB<T>.OrderBy(Expression<Func<T, object?>> lhs, OrderByClauseDe? ob = null) => this;
-		ISelectQB<T> ISelectQB<T>.OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByClauseDe? ob = null) => this;
-
-		ISelectQB<T> ISelectQB<T>.GroupBy(Expression<Func<T, object?>> lhs) => this;
-		ISelectQB<T> ISelectQB<T>.GroupBy<T2>(Expression<Func<T2, object?>> lhs) => this;
-
 		ISelectQB<T> ISelectQB<T>.Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 		ISelectQB<T> ISelectQB<T>.Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 
