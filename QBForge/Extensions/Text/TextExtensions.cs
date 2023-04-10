@@ -152,11 +152,11 @@ namespace QBForge.Extensions.Text
 
 		internal static IRenderContext AppendArgument(this IRenderContext query, Clause arg)
 		{
-			if (arg is DataEntryClouse dataEntryClause)
+			if (arg is DataEntryClause dataEntryClause)
 			{
 				query.Append(dataEntryClause.Value);
 			}
-			else if (arg is ParameterClouse parameterClause)
+			else if (arg is ParameterClause parameterClause)
 			{
 				query.Append(query.MakeParamPlaceholder(parameterClause.Value));
 			}

@@ -1,5 +1,7 @@
 ﻿using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace QBForge.Providers
@@ -38,17 +40,6 @@ namespace QBForge.Providers
 		ISelectQB<T> ISelectQB<T>.Except(ISelectQB<T> query) => this;
 		ISelectQB<T> ISelectQB<T>.ExceptAll(ISelectQB<T> query) => this;
 
-		ISelectQB<T> ISelectQB<T>.On(Action<ISelectQB<T>> parenthesized) => this;
-		ISelectQB<T> ISelectQB<T>.On<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op) => this;
-		ISelectQB<T> ISelectQB<T>.On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.On<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrOn(Action<ISelectQB<T>> parenthesized) => this;
-		ISelectQB<T> ISelectQB<T>.OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op) => this;
-		ISelectQB<T> ISelectQB<T>.OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs) => this;
-		ISelectQB<T> ISelectQB<T>.OrOn<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs) => this;
-
 		ISelectQB<T> ISelectQB<T>.OrderBy(Expression<Func<T, object?>> lhs, OrderByClauseDe? ob = null) => this;
 		ISelectQB<T> ISelectQB<T>.OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByClauseDe? ob = null) => this;
 
@@ -58,7 +49,46 @@ namespace QBForge.Providers
 		ISelectQB<T> ISelectQB<T>.Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 		ISelectQB<T> ISelectQB<T>.Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Skip(long offset, string? @label = null) => this;
-		ISelectQB<T> ISelectQB<T>.Take(int limit, string? @label = null) => this;
+		ISelectQB<T> ISelectQB<T>.Skip(long skip, string? @label = null) => this;
+		ISelectQB<T> ISelectQB<T>.Take(int take, string? @label = null) => this;
+
+
+		private TSectionClause EnsureSectionClause<TSectionClause>(string section) where TSectionClause : Clause, new()
+		{
+			var sectionClause = _context.Clause.FirstOrDefault(x => x.Key == section);
+			if (sectionClause == null)
+			{
+				_context.Clause.Add(sectionClause = new TSectionClause());
+			}
+
+			return (TSectionClause)sectionClause;
+		}
+
+		private Clause? GetSectionClause(string section)
+		{
+			return _context.Clause.FirstOrDefault(x => x.Key == section);
+		}
+
+		private TSectionClause? GetSectionClause<TSectionClause>(string section) where TSectionClause : Clause
+		{
+			return (TSectionClause?)_context.Clause.FirstOrDefault(x => x.Key == section);
+		}
+
+		private OnClause? GetJoinOnClause(string joinedTableLabel, Clause? joinSection = null)
+		{
+			joinSection ??= GetSectionClause(ClauseSections.Join);
+
+			var joinClause = joinSection?.FirstOrDefault(x => x.Key == joinedTableLabel);
+
+			return (OnClause?)(joinClause as BinaryClause)?.Right;
+		}
+
+		private bool TableLabelExists(string labelAs, Clause? joinSection = null)
+		{
+			joinSection ??= GetSectionClause(ClauseSections.Join);
+
+			return joinSection.Any(x => x.Key == labelAs)
+				|| (GetSectionClause(ClauseSections.From) as FromSectionClause)?.LabelAs == labelAs;
+		}
 	}
 }

@@ -20,13 +20,21 @@ namespace QBForge.PostgreSql
 		{
 			query
 				.Append("EXISTS").TryAppendLine()
-				.TryAppendCurrentIndent().Append('(').TryAppendLine();
+				.TryAppendCurrentIndent(1).Append('(').TryAppendLine();
 
-			lhs.Render((IBuildQueryContext)query);
+			query.CurrentIndent += 2;
+			try
+			{
+				lhs.Render((IBuildQueryContext)query);
+			}
+			finally
+			{
+				query.CurrentIndent -= 2;
+			}
 
 			query
 				.TryAppendLine()
-				.TryAppendCurrentIndent().Append(')');
+				.TryAppendCurrentIndent(1).Append(')');
 
 			return query;
 		}
@@ -35,13 +43,21 @@ namespace QBForge.PostgreSql
 		{
 			query
 				.Append("NOT EXISTS").TryAppendLine()
-				.TryAppendCurrentIndent().Append('(').TryAppendLine();
+				.TryAppendCurrentIndent(1).Append('(').TryAppendLine();
 
-			lhs.Render((IBuildQueryContext)query);
+			query.CurrentIndent += 2;
+			try
+			{
+				lhs.Render((IBuildQueryContext)query);
+			}
+			finally
+			{
+				query.CurrentIndent -= 2;
+			}
 
 			query
 				.TryAppendLine()
-				.TryAppendCurrentIndent().Append(')');
+				.TryAppendCurrentIndent(1).Append(')');
 
 			return query;
 		}

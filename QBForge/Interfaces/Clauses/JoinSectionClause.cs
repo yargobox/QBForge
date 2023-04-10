@@ -15,16 +15,11 @@ namespace QBForge.Interfaces.Clauses
 			{
 				if (next)
 				{
-					render
-						.TryAppendLineOrAppendSpace()
-						.TryAppendCurrentIndent(1);
+					render.TryAppendLineOrAppendSpace();
 				}
 				else
 				{
 					next = true;
-
-					render
-						.TryAppendCurrentIndent(1);
 				}
 
 				clause.Render(context);

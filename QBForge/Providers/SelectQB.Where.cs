@@ -60,11 +60,7 @@ namespace QBForge.Providers
 
 		private ISelectQB<T> AddWhereCond(bool or, Clause right, Clause? whereSection = null)
 		{
-			whereSection ??= _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Where);
-			if (whereSection == null)
-			{
-				_context.Clause.Add(whereSection = new WhereSectionClause());
-			}
+			whereSection ??= EnsureSectionClause<WhereSectionClause>(ClauseSections.Where);
 
 			if (whereSection.Count > 0)
 			{
@@ -89,19 +85,15 @@ namespace QBForge.Providers
 			return this;
 		}
 
-		private ISelectQB<T> AddWhereCond(bool or, Action<ISelectQB<T>> parenthesized)
+		private ISelectQB<T> AddWhereCond(bool or, Action<ISelectQB<T>> parenthesize)
 		{
-			var whereSection = _context.Clause.FirstOrDefault(x => x.Key == ClauseSections.Where);
-			if (whereSection == null)
-			{
-				_context.Clause.Add(whereSection = new WhereSectionClause());
-			}
+			var whereSection = EnsureSectionClause<WhereSectionClause>(ClauseSections.Where);
 
 			// add Empty to the end
 			whereSection.Add(Clause.Empty);
 
-			// Empty will be replaced with the parenthesized condition (the Right one)
-			parenthesized(this);
+			// Empty will be replaced with the parenthesize condition (the Right one)
+			parenthesize(this);
 
 			// The last one must be our Right instead of Empty
 			var right = whereSection.Clauses![whereSection.Count - 1];

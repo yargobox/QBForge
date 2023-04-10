@@ -10,15 +10,7 @@ namespace QBForge.Interfaces.Clauses
 		{
 			if (!object.ReferenceEquals(Value.Context.Provider, context.RenderContext.Provider)) throw new InvalidOperationException();
 
-			context.RenderContext.CurrentIndent++;
-			try
-			{
-				context.RenderContext.Provider.Build(Value, context);
-			}
-			finally
-			{
-				context.RenderContext.CurrentIndent--;
-			}
+			context.RenderContext.Provider.Build(Value, context);
 		}
 	}
 }

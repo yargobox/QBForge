@@ -7,7 +7,7 @@ namespace QBForge.PostgreSql
 {
 	public static class QB
 	{
-		public static ISelectQB<T> Select<T>(string tableName, string? label = null, dynamic? parameters = null)
+		public static ISelectQB<T> Select<T>(string tableName, string? labelAs = null, dynamic? parameters = null)
 		{
 			if (string.IsNullOrEmpty(tableName)) throw new ArgumentNullException(nameof(tableName));
 
@@ -15,7 +15,7 @@ namespace QBForge.PostgreSql
 
 			var qb = PostgreSqlConfig.Provider.CreateSelectQB<T>();
 
-			qb.Context.Clause.Add(new FromSectionClause(new TableClouse(schemaName, objectName, label)));//!!! parameters
+			qb.Context.Clause.Add(new FromSectionClause(new TableClause(schemaName, objectName), labelAs));//!!! parameters
 
 			return qb;
 		}

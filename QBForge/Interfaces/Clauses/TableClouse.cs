@@ -1,9 +1,9 @@
 ﻿namespace QBForge.Interfaces.Clauses
 {
-	public class TableClouse : ValueClause<ObjectEntry>
+	public class TableClause : ValueClause<ObjectEntry>
 	{
-		public TableClouse(string? schemaName, string objectName, string? label = null)
-			: base(new ObjectEntry(schemaName, objectName, label)) { }
+		public TableClause(ObjectEntry objectEntry) : base(objectEntry) { }
+		public TableClause(string? schemaName, string objectName) : base(new ObjectEntry(schemaName, objectName)) { }
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -15,25 +15,11 @@
 				render.Append('.');
 			}
 			render.AppendObject(Value.ObjectName);
-			if (!string.IsNullOrEmpty(Value.Label))
-			{
-				render.Append(' ');
-				render.AppendAsLabel(Value.Label!);
-			}
 		}
 
 		public override string ToString()
 		{
-			var result = string.IsNullOrEmpty(Value.SchemaName)
-				? Value.ObjectName
-				: string.Concat(Value.SchemaName!, ".", Value.ObjectName);
-
-			if (!string.IsNullOrEmpty(Value.Label))
-			{
-				result = string.Concat(result, " AS ", Value.Label);
-			}
-
-			return result;
+			return Value.ToString();
 		}
 	}
 }

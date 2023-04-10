@@ -21,7 +21,7 @@ namespace QBForge.Tests
 					.Include<Category>(c => c.CategoryId)
 					.Include<Category>(c => c.Name)
 					.Include<Brand>(b => b)
-				.LeftJoin<Category>("categories", "c")
+				.Join<Category>("categories", "c")
 					.On<Category>(c => c.CategoryId, Op.Equal, p => p.CategoryId)
 				.LeftJoin<Brand>("brands", "b")
 					.On<Brand>(b => b.BrandId, Op.Equal, p => p.BrandId)

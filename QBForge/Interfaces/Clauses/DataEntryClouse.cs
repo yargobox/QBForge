@@ -1,10 +1,11 @@
 ﻿namespace QBForge.Interfaces.Clauses
 {
-	public class DataEntryClouse : ValueClause<DataEntry>
+	public class DataEntryClause : ValueClause<DataEntry>
 	{
 		public override string? Key => Value.Name;
 
-		public DataEntryClouse(DataEntry de) : base(de) { }
+		public DataEntryClause(DataEntry de) : base(de) { }
+		public DataEntryClause(string? refLabel, string name) : base(new DataEntry(refLabel, name)) { }
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -20,9 +21,7 @@
 
 		public override string ToString()
 		{
-			return string.IsNullOrEmpty(Value.RefLabel)
-				? Value.Name
-				: string.Concat(Value.RefLabel!, ".", Value.Name);
+			return Value.ToString();
 		}
 	}
 }

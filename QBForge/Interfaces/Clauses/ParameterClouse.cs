@@ -1,8 +1,8 @@
 ﻿namespace QBForge.Interfaces.Clauses
 {
-	public class ParameterClouse : ValueClause<object?>
+	public class ParameterClause : ValueClause<object?>
 	{
-		public ParameterClouse(object? value) : base(value) { }
+		public ParameterClause(object? value) : base(value) { }
 
 		public override void Render(IBuildQueryContext context)
 		{

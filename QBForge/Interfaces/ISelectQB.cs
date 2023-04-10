@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QBForge.Extensions.Linq.Expressions;
+using System;
 using System.Linq.Expressions;
 
 namespace QBForge.Interfaces
@@ -16,8 +17,8 @@ namespace QBForge.Interfaces
 		ISelectQB<T> Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs = null);
 		ISelectQB<T> Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? labelAs = null);
 
-		ISelectQB<T> Where(Action<ISelectQB<T>> parenthesized);
-		ISelectQB<T> OrWhere(Action<ISelectQB<T>> parenthesized);
+		ISelectQB<T> Where(Action<ISelectQB<T>> parenthesize);
+		ISelectQB<T> OrWhere(Action<ISelectQB<T>> parenthesize);
 		ISelectQB<T> Where(Expression<Func<T, object?>> lhs, UnaryOperator op);
 		ISelectQB<T> OrWhere(Expression<Func<T, object?>> lhs, UnaryOperator op);
 		ISelectQB<T> Where<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op);
@@ -33,16 +34,16 @@ namespace QBForge.Interfaces
 		ISelectQB<T> Where<T2>(UnaryOperator op, ISelectQB<T2> subQuery);
 		ISelectQB<T> OrWhere<T2>(UnaryOperator op, ISelectQB<T2> subQuery);
 
-		ISelectQB<T> Join<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
-		ISelectQB<T> Join<TJoined>(string tableName, string? labelAs = null);
-		ISelectQB<T> LeftJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
-		ISelectQB<T> LeftJoin<TJoined>(string tableName, string? labelAs = null);
-		ISelectQB<T> RightJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
-		ISelectQB<T> RightJoin<TJoined>(string tableName, string? labelAs = null);
-		ISelectQB<T> FullJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
-		ISelectQB<T> FullJoin<TJoined>(string tableName, string? labelAs = null);
-		ISelectQB<T> CrossJoin<TJoined>(Action<ISelectQB<TJoined>> subQuery, string labelAs);
-		ISelectQB<T> CrossJoin<TJoined>(string tableName, string? labelAs = null);
+		ISelectQB<T> Join<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
+		ISelectQB<T> Join<TJoined>(string tableName, string labelAs);
+		ISelectQB<T> LeftJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
+		ISelectQB<T> LeftJoin<TJoined>(string tableName, string labelAs);
+		ISelectQB<T> RightJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
+		ISelectQB<T> RightJoin<TJoined>(string tableName, string labelAs);
+		ISelectQB<T> FullJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
+		ISelectQB<T> FullJoin<TJoined>(string tableName, string labelAs);
+		ISelectQB<T> CrossJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
+		ISelectQB<T> CrossJoin<TJoined>(string tableName, string labelAs);
 
 		ISelectQB<T> Distinct();
 
@@ -53,16 +54,20 @@ namespace QBForge.Interfaces
 		ISelectQB<T> Except(ISelectQB<T> query);
 		ISelectQB<T> ExceptAll(ISelectQB<T> query);
 
-		ISelectQB<T> On(Action<ISelectQB<T>> parenthesized);
+		ISelectQB<T> On(Action<ISelectQB<T>> parenthesize, string joinedTableLabel);
+		ISelectQB<T> OrOn(Action<ISelectQB<T>> parenthesize, string joinedTableLabel);
+		ISelectQB<T> On(Expression<Func<T, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrOn(Expression<Func<T, object?>> lhs, UnaryOperator op);
 		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op);
-		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs);
-		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> On<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
-		ISelectQB<T> OrOn(Action<ISelectQB<T>> parenthesized);
 		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs);
 		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> On(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrOn(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
 		ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
-		ISelectQB<T> OrOn<T2, TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs);
+		ISelectQB<T> On<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
+		ISelectQB<T> OrOn<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
 
 		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, OrderByClauseDe? ob = null);
 		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByClauseDe? ob = null);

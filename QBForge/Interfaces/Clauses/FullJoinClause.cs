@@ -2,13 +2,13 @@
 
 namespace QBForge.Interfaces.Clauses
 {
-	public class InnerJoinClause : BinaryClause
+	public class FullJoinClause : BinaryClause
 	{
 		public override string? Key => LabelAs;
 		public string LabelAs { get; }
 
-		public InnerJoinClause(TableClause tableClause, string labelAs) : base(tableClause, new OnClause()) => LabelAs = labelAs;
-		public InnerJoinClause(SubQueryClause subQueryClause, string labelAs) : base(subQueryClause, new OnClause()) => LabelAs = labelAs;
+		public FullJoinClause(TableClause tableClause, string labelAs) : base(tableClause, new OnClause()) => LabelAs = labelAs;
+		public FullJoinClause(SubQueryClause subQueryClause, string labelAs) : base(subQueryClause, new OnClause()) => LabelAs = labelAs;
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -17,12 +17,12 @@ namespace QBForge.Interfaces.Clauses
 			if (Left is TableClause)
 			{
 				render
-					.TryAppendCurrentIndent(1).Append("INNER JOIN "); Left.Render(context); render.Append(' ').AppendAsLabel(LabelAs);
+					.TryAppendCurrentIndent(1).Append("FULL JOIN "); Left.Render(context); render.Append(' ').AppendAsLabel(LabelAs);
 			}
 			else
 			{
 				render
-					.TryAppendCurrentIndent(1).Append("INNER JOIN").TryAppendLineOrAppendSpace()
+					.TryAppendCurrentIndent(1).Append("FULL JOIN").TryAppendLineOrAppendSpace()
 					.TryAppendCurrentIndent(1).Append('(').TryAppendLine();
 
 				render.CurrentIndent += 2;

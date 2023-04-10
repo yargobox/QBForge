@@ -80,7 +80,7 @@ namespace QBForge.Interfaces.Clauses
 			{
 				var dataEntry = new DataEntry(null, mi.MappedName);
 
-				Clause includeClause = new DataEntryClouse(dataEntry);
+				Clause includeClause = new DataEntryClause(dataEntry);
 				if (dataEntry.Name != mi.Name)
 				{
 					includeClause = new IncludeClause(mi.Name, includeClause, mi.Name);
