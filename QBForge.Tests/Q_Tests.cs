@@ -33,6 +33,13 @@ namespace QBForge.Tests
 				.GroupBy<Brand>(b => b.Name)
 				.Where(Op.Exists, QB.Select<Brand>("brands", "b").Where(b => b.BrandId, Op.IsNotNull))
 
+				.UnionAll(
+					QB.Select<Product>("products")
+						.Include(p => p.CategoryId)
+					.GroupBy(p => p.CategoryId)
+					.Having(Ag.MIN, p => p.Price, Op.Greater, 15.00)
+				)
+
 				.Map<Category, Brand>((p, c, b) => { p.Category = c; p.Brand = b; return p; })
 			;
 
