@@ -32,6 +32,8 @@ namespace QBForge.Tests
 				.OrderBy(Ag.COUNT_1)
 				.OrderBy(Ag.COUNT_ALL, Ob.DESC)
 				.OrderBy(Ag.COUNT, p => p.CategoryId, Ob.DESC)
+				.OrderBy(p => p.Name, Ob.DESC_NULLS_LAST)
+				.OrderBy(p => p.Name, Ob.ASC_NULLS_FIRST)
 				.GroupBy(p => p.Price)
 				.GroupBy<Brand>(b => b.Name)
 				.Where(Op.Exists, QB.Select<Brand>("brands", "b").Where(b => b.BrandId, Op.IsNotNull))
