@@ -1,32 +1,48 @@
-﻿using QBForge.Interfaces;
+﻿using QBForge.Extensions.Text;
+using QBForge.Interfaces;
+using QBForge.Interfaces.Clauses;
 
 namespace QBForge.PostgreSql
 {
 	public static class Ag
 	{
-		public static IAggrCall COUNT(this IAggrCall query, DataEntry arg)
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+		public static IAggrRender COUNT_1(this IAggrRender query)
+#pragma warning restore CA1707 // Identifiers should not contain underscores
 		{
-			query.Append("COUNT(").Append(arg).Append(')'); return query;
+			query.Append("COUNT(1)"); return query;
 		}
 
-		public static IAggrCall SUM(this IAggrCall query, DataEntry arg)
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+		public static IAggrRender COUNT_ALL(this IAggrRender query)
+#pragma warning restore CA1707 // Identifiers should not contain underscores
 		{
-			query.Append("SUM(").Append(arg).Append(')'); return query;
+			query.Append("COUNT(*)"); return query;
 		}
 
-		public static IAggrCall MIN(this IAggrCall query, DataEntry arg)
+		public static IAggrRender COUNT(this IAggrRender query, Clause arg)
 		{
-			query.Append("MIN(").Append(arg).Append(')'); return query;
+			query.Append("COUNT(").AppendArgument(arg).Append(')'); return query;
 		}
 
-		public static IAggrCall MAX(this IAggrCall query, DataEntry arg)
+		public static IAggrRender SUM(this IAggrRender query, Clause arg)
 		{
-			query.Append("MAX(").Append(arg).Append(')'); return query;
+			query.Append("SUM(").AppendArgument(arg).Append(')'); return query;
 		}
 
-		public static IAggrCall AVG(this IAggrCall query, DataEntry arg)
+		public static IAggrRender MIN(this IAggrRender query, Clause arg)
 		{
-			query.Append("AVG(").Append(arg).Append(')'); return query;
+			query.Append("MIN(").AppendArgument(arg).Append(')'); return query;
+		}
+
+		public static IAggrRender MAX(this IAggrRender query, Clause arg)
+		{
+			query.Append("MAX(").AppendArgument(arg).Append(')'); return query;
+		}
+
+		public static IAggrRender AVG(this IAggrRender query, Clause arg)
+		{
+			query.Append("AVG(").AppendArgument(arg).Append(')'); return query;
 		}
 	}
 }

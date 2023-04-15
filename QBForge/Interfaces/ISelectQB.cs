@@ -7,11 +7,16 @@ namespace QBForge.Interfaces
 	public interface ISelectQB<T> : IQueryBuilder<T>
 	{
 #pragma warning disable CA1716
+
+		ISelectQB<T> From(string tableName, string? labelAs = null, dynamic? parameters = null);
+
+		ISelectQB<T> With<TCte>(string labelCte, ISelectQB<TCte> subQuery);
+
 		ISelectQB<T> IncludeAll(string? tableLabel = null);
 		ISelectQB<T> Include(Expression<Func<T, object?>> de, string? labelAs = null);
 		ISelectQB<T> Include<TJoined>(Expression<Func<TJoined, object?>> de, string? labelAs = null);
-		ISelectQB<T> Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? labelAs = null);
-		ISelectQB<T> Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? labelAs = null);
+		ISelectQB<T> Include<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? labelAs = null);
 		ISelectQB<T> Include(FuncCallClauseDe func, Expression<Func<T, object?>> deArg, string? labelAs = null);
 		ISelectQB<T> Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> deArg, string? labelAs = null);
 		ISelectQB<T> Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs = null);
@@ -69,14 +74,17 @@ namespace QBForge.Interfaces
 		ISelectQB<T> On<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
 		ISelectQB<T> OrOn<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs);
 
-		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, OrderByHandler? ob = null);
-		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, OrderByHandler? ob = null);
+		ISelectQB<T> OrderBy(Expression<Func<T, object?>> lhs, UnaryOrderByHandler? ob = null);
+		ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, UnaryOrderByHandler? ob = null);
+		ISelectQB<T> OrderBy(AggrHandler ag, UnaryOrderByHandler? ob = null);
+		ISelectQB<T> OrderBy(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, UnaryOrderByHandler? ob = null);
+		ISelectQB<T> OrderBy<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, UnaryOrderByHandler? ob = null);
 
 		ISelectQB<T> GroupBy(Expression<Func<T, object?>> lhs);
 		ISelectQB<T> GroupBy<T2>(Expression<Func<T2, object?>> lhs);
 
-		ISelectQB<T> Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
-		ISelectQB<T> Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
 
 		ISelectQB<T> Skip(long offset, string? @label = null);
 		ISelectQB<T> Take(int limit, string? @label = null);

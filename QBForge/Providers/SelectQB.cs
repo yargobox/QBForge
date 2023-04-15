@@ -3,6 +3,7 @@ using QBForge.Interfaces.Clauses;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Xml.Schema;
 
 namespace QBForge.Providers
 {
@@ -31,10 +32,23 @@ namespace QBForge.Providers
 			return query!;
 		}
 
+		ISelectQB<T> ISelectQB<T>.From(string tableName, string? labelAs, dynamic? parameters)
+		{
+			if (string.IsNullOrEmpty(tableName)) throw new ArgumentNullException(nameof(tableName));
+
+			var (schemaName, objectName) = _context.Provider.ParseSchemaObject(tableName);
+
+			var fromSection = EnsureSectionClause<FromSectionClause>(ClauseSections.From);
+
+			fromSection.Add(new FromClause(new TableClause(schemaName, objectName), labelAs));//!!! parameters
+
+			return this;
+		}
+
 		ISelectQB<T> ISelectQB<T>.Distinct() => this;
 
-		ISelectQB<T> ISelectQB<T>.Having(AggrCallClauseDe ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.Having<T2>(AggrCallClauseDe ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
+		ISelectQB<T> ISelectQB<T>.Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
+		ISelectQB<T> ISelectQB<T>.Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 
 		ISelectQB<T> ISelectQB<T>.Skip(long skip, string? @label = null) => this;
 		ISelectQB<T> ISelectQB<T>.Take(int take, string? @label = null) => this;
@@ -70,12 +84,15 @@ namespace QBForge.Providers
 			return (OnClause?)(joinClause as BinaryClause)?.Right;
 		}
 
-		private bool TableLabelExists(string labelAs, Clause? joinSection = null)
+		private bool TableLabelExists(string labelAs, Clause? fromSection = null, Clause? joinSection = null, Clause? withCteSection = null)
 		{
+			var concreteFromSection = (fromSection ?? GetSectionClause(ClauseSections.From)) as FromSectionClause;
 			joinSection ??= GetSectionClause(ClauseSections.Join);
+			withCteSection ??= GetSectionClause(ClauseSections.WithCte);
 
-			return joinSection.Any(x => x.Key == labelAs)
-				|| (GetSectionClause(ClauseSections.From) as FromSectionClause)?.LabelAs == labelAs;
+			return concreteFromSection?.Any(x => x.Key == labelAs) == true
+				|| joinSection?.Any(x => x.Key == labelAs) == true
+				|| withCteSection?.Any(x => x.Key == labelAs) == true;
 		}
 	}
 }

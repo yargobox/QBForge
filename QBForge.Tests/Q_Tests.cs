@@ -29,6 +29,9 @@ namespace QBForge.Tests
 				.OrderBy(p => p.Price)
 				.OrderBy(p => p.Price, Ob.DESC)
 				.OrderBy<Brand>(b => b.Name, Ob.ASC)
+				.OrderBy(Ag.COUNT_1)
+				.OrderBy(Ag.COUNT_ALL, Ob.DESC)
+				.OrderBy(Ag.COUNT, p => p.CategoryId, Ob.DESC)
 				.GroupBy(p => p.Price)
 				.GroupBy<Brand>(b => b.Name)
 				.Where(Op.Exists, QB.Select<Brand>("brands", "b").Where(b => b.BrandId, Op.IsNotNull))
@@ -87,6 +90,24 @@ namespace QBForge.Tests
 					.Having(Ag.MIN, p => p.Price, Op.Greater, 15.00)
 				)
 			;
+		}
+
+		[Fact]
+		public void WithCte()
+		{
+			var q =
+				QB.With("b",
+					QB.Select<Brand>("brands").IncludeAll()
+				)
+				.With("c",
+					QB.Select<Category>("categories")
+				)
+				.Select<Product>("products", "p")
+				.From("c", "c2")
+			;
+
+			var query = q.ToString(Interfaces.ReadabilityLevels.High);
+			var len = query.Length;
 		}
 
 		public class Product

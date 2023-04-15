@@ -2,16 +2,13 @@
 
 namespace QBForge.Interfaces.Clauses
 {
-	public class FromSectionClause : BlockClause
+	public class WithCteSectionClause : BlockClause
 	{
-		public override string? Key => ClauseSections.From;
+		public override string? Key => ClauseSections.WithCte;
 
 		public override void Render(IBuildQueryContext context)
 		{
 			var render = context.RenderContext;
-
-			render
-				.TryAppendCurrentIndent().Append("FROM").TryAppendLineOrAppendSpace();
 
 			var next = false;
 			foreach (var clause in this)
@@ -19,15 +16,14 @@ namespace QBForge.Interfaces.Clauses
 				if (next)
 				{
 					render
-						.Append(',').TryAppendLineOrTryAppendSpace()
-						.TryAppendCurrentIndent(1);
+						.Append(',').TryAppendLineOrAppendSpace()
+						.TryAppendCurrentIndent();
 				}
 				else
 				{
 					next = true;
 
-					render
-						.TryAppendCurrentIndent(1);
+					render.TryAppendCurrentIndent().Append("WITH ");
 				}
 
 				clause.Render(context);

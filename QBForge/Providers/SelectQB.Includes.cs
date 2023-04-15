@@ -26,7 +26,7 @@ namespace QBForge.Providers
 
 			if (string.IsNullOrEmpty(tableLabel))
 			{
-				includeClause.Clauses!.Clear();
+				includeSection.Clauses!.Clear();
 			}
 			else
 			{
@@ -86,9 +86,9 @@ namespace QBForge.Providers
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include(AggrCallClauseDe aggregate, Expression<Func<T, object?>> de, string? asLabel) => this;
+		ISelectQB<T> ISelectQB<T>.Include(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? asLabel) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(AggrCallClauseDe aggregate, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
+		ISelectQB<T> ISelectQB<T>.Include<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
 
 		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDe func, Expression<Func<T, object?>> de, string? asLabel) => this;
 

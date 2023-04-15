@@ -29,5 +29,10 @@ namespace QBForge.Providers
 		{
 			return new SelectQB<T>(new QBContext(this, new SelectSectionClause(typeof(T))), false);
 		}
+
+		public virtual IWithCteQB CreateWithCteQB()
+		{
+			return new WithCteQB(new QBContext(this, new WithCteSectionClause()));
+		}
 	}
 }

@@ -26,6 +26,11 @@ namespace QBForge.Interfaces
 		/// </summary>
 		ISelectQB<T> CreateSelectQB<T>();
 
+		/// <summary>
+		/// Create a CTE query builder
+		/// </summary>
+		IWithCteQB CreateWithCteQB();
+
 		// Cache
 		//
 

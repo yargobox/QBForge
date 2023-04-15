@@ -28,11 +28,10 @@ namespace QBForge.Interfaces.Clauses
 		{
 			var render = context.RenderContext;
 
-			render.TryAppendCurrentIndent().Append("SELECT");
-
+			var next = false;
 			foreach (var sectionKey in _selectQueryTemplate)
 			{
-				var section = clause.Clauses.FirstOrDefault(x => x.Key == sectionKey);
+				var section = clause.Clauses!.FirstOrDefault(x => x.Key == sectionKey);
 
 				if (section == null)
 				{
@@ -42,11 +41,18 @@ namespace QBForge.Interfaces.Clauses
 					}
 					else
 					{
+						if (sectionKey == ClauseSections.Select)
+						{
+							if (next) render.TryAppendLineOrAppendSpace(); else next = true;
+
+							render.TryAppendCurrentIndent().Append("SELECT");
+						}
+
 						continue;
 					}
 				}
 
-				render.TryAppendLineOrAppendSpace();
+				if (next) render.TryAppendLineOrAppendSpace(); else next = true;
 
 				section.Render(context);
 			}

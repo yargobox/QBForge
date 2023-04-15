@@ -39,7 +39,7 @@ namespace QBForge.Providers
 
 			var joinSection = EnsureSectionClause<JoinSectionClause>(ClauseSections.Join);
 
-			if (TableLabelExists(labelAs, joinSection))
+			if (TableLabelExists(labelAs, joinSection: joinSection))
 			{
 				throw MakeExceptionLablelHasAlreadyBeenAdded(labelAs);
 			}
@@ -60,7 +60,7 @@ namespace QBForge.Providers
 
 			var joinSection = EnsureSectionClause<JoinSectionClause>(ClauseSections.Join);
 
-			if (TableLabelExists(labelAs, joinSection))
+			if (TableLabelExists(labelAs, joinSection: joinSection))
 			{
 				throw MakeExceptionLablelHasAlreadyBeenAdded(labelAs);
 			}

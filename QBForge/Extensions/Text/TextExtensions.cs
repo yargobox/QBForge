@@ -130,6 +130,20 @@ namespace QBForge.Extensions.Text
 			return render;
 		}
 
+		internal static IRenderContext TryAppendLineOrTryAppendSpace(this IRenderContext render)
+		{
+			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks))
+			{
+				render.AppendLine();
+			}
+			else if (!render.Readability.HasFlag(ReadabilityLevels.AvoidSpaces))
+			{
+				render.Append(' ');
+			}
+
+			return render;
+		}
+
 		internal static IRenderContext TryAppendLine(this IRenderContext render)
 		{
 			if (render.Readability.HasFlag(ReadabilityLevels.LineBreaks))
@@ -150,15 +164,15 @@ namespace QBForge.Extensions.Text
 			return render;
 		}
 
-		internal static IRenderContext AppendArgument(this IRenderContext query, Clause arg)
+		internal static IRenderContext AppendArgument(this IRenderContext render, Clause arg)
 		{
 			if (arg is DataEntryClause dataEntryClause)
 			{
-				query.Append(dataEntryClause.Value);
+				render.Append(dataEntryClause.Value);
 			}
 			else if (arg is ParameterClause parameterClause)
 			{
-				query.Append(query.MakeParamPlaceholder(parameterClause.Value));
+				render.Append(render.MakeParamPlaceholder(parameterClause.Value));
 			}
 			else if (arg is null)
 			{
@@ -166,10 +180,11 @@ namespace QBForge.Extensions.Text
 			}
 			else
 			{
-				throw new ArgumentException($"{arg?.GetType().FullName} is not supported", nameof(arg));
+				arg.Render((IBuildQueryContext)render);
+				//throw new ArgumentException($"{arg?.GetType().FullName} is not supported", nameof(arg));
 			}
 
-			return query;
+			return render;
 		}
 	}
 }
