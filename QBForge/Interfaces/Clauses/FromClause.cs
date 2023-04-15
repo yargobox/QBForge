@@ -5,7 +5,8 @@
 		public override string? Key => LabelAs;
 		public string? LabelAs { get; }
 
-		public FromClause(TableClause tableClause, string? labelAs) : base(tableClause)
+		public FromClause(TableClause tableClause, string? labelAs) : this((Clause)tableClause, labelAs) { }
+		protected FromClause(Clause clause, string? labelAs) : base(clause)
 		{
 			LabelAs = string.IsNullOrEmpty(labelAs) ? null : labelAs;
 		}
@@ -22,11 +23,25 @@
 			}
 		}
 
-		public override string ToString()
+		public override string? ToString()
 		{
 			return string.IsNullOrEmpty(LabelAs)
 				? Left.ToString()
 				: string.Concat(Left.ToString(), " AS ", LabelAs);
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new FromClause(left, LabelAs);
+			}
 		}
 	}
 }

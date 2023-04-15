@@ -13,10 +13,7 @@ namespace QBForge.Providers
 
 		public IQBContext Context => _context;
 
-		public WithCteQB(IQBContext context)
-		{
-			_context = context;
-		}
+		public WithCteQB(IQBContext context) => _context = context;
 
 		public override string ToString() => ToString(out var _, ReadabilityLevels.Default);
 		public string ToString(bool pretty) => ToString(out var _, pretty ? ReadabilityLevels.Middle : ReadabilityLevels.Default);
@@ -47,9 +44,14 @@ namespace QBForge.Providers
 
 			var selectQB = Context.Provider.CreateSelectQB<T>();
 
-			selectQB.Context.Clause.Add(Context.Clause);//!!! deep copy is needed here
+			selectQB.Context.Clause.Add(Context.Clause/*.Clone()*/);
 
 			return selectQB.From(tableName, labelAs, parameters);
+		}
+
+		public object Clone()
+		{
+			return new WithCteQB((IQBContext)Context.Clone());
 		}
 	}
 }

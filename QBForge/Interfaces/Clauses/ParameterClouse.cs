@@ -12,5 +12,10 @@
 		{
 			return Value?.ToString() ?? "?";
 		}
+
+		public override Clause Clone()
+		{
+			return this;
+		}
 	}
 }

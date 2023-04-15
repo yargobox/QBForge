@@ -11,17 +11,27 @@ namespace QBForge.Interfaces.Clauses
 		public override string? Key => ClauseSections.Select;
 		public Type DocumentType { get; }
 
-        public SelectSectionClause(Type documentType)
-        {
+		public SelectSectionClause(Type documentType)
+		{
 			DocumentType = documentType;
-        }
+		}
 
-        public override void Render(IBuildQueryContext context)
+		public override void Render(IBuildQueryContext context)
 		{
 			if (!context.RenderContext.Provider.Render(this, context))
 			{
 				Render(this, context);
 			}
+		}
+
+		public override Clause Clone()
+		{
+			var sectionClouse = new SelectSectionClause(DocumentType);
+			foreach (var child in this)
+			{
+				sectionClouse.Add(child.Clone());
+			}
+			return sectionClouse;
 		}
 
 		private static void Render(SelectSectionClause clause, IBuildQueryContext context)

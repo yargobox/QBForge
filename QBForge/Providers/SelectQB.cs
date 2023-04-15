@@ -3,22 +3,18 @@ using QBForge.Interfaces.Clauses;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Xml.Schema;
 
 namespace QBForge.Providers
 {
 	internal sealed partial class SelectQB<T> : ISelectQB<T>
 	{
 		private readonly IQBContext _context;
-		private readonly bool _foreignContext;
 
 		IQBContext IQueryBuilder.Context => _context;
 
-		public SelectQB(IQBContext context, bool foreignContext)
-		{
-			_context = context;
-			_foreignContext = foreignContext;
-		}
+		public SelectQB(IQBContext context) => _context = context;
+
+		public object Clone() => new SelectQB<T>((IQBContext)_context.Clone());
 
 		public override string ToString() => ToString(out var _, ReadabilityLevels.Default);
 		public string ToString(bool pretty) => ToString(out var _, pretty ? ReadabilityLevels.Middle : ReadabilityLevels.Default);

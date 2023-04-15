@@ -5,10 +5,8 @@ using QBForge.Interfaces.Clauses;
 
 namespace QBForge.Interfaces
 {
-    public interface IQBContext
+    public interface IQBContext : ICloneable
 	{
-		IQBContext Clone();
-
 		public Clause Clause { get; }
 
 		IQBProvider Provider { get; }

@@ -31,17 +31,17 @@ namespace QBForge.Providers
 				MapNextTo = string.Empty;
 			}
 
-			public IQBContext Clone()
+			public object Clone()
 			{
-				var copy = new QBContext(Provider, Clause)//!!! deep copy needed
+				return new QBContext(Provider, Clause.Clone())
 				{
+					LastBuild = LastBuild,
+					LastQuery = LastQuery,
+					//LastParameters = LastParameters,//!!!
+					MapNextTo = MapNextTo,
 					Tag = Tag,
 					Map = Map
 				};
-
-				// !!!
-
-				return copy;
 			}
 		}
 	}

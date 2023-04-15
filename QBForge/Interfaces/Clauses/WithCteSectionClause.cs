@@ -29,5 +29,15 @@ namespace QBForge.Interfaces.Clauses
 				clause.Render(context);
 			}
 		}
+
+		public override Clause Clone()
+		{
+			var sectionClouse = new WithCteSectionClause();
+			foreach (var child in this)
+			{
+				sectionClouse.Add(child.Clone());
+			}
+			return sectionClouse;
+		}
 	}
 }

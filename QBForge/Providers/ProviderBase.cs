@@ -27,7 +27,7 @@ namespace QBForge.Providers
 
 		public virtual ISelectQB<T> CreateSelectQB<T>()
 		{
-			return new SelectQB<T>(new QBContext(this, new SelectSectionClause(typeof(T))), false);
+			return new SelectQB<T>(new QBContext(this, new SelectSectionClause(typeof(T))));
 		}
 
 		public virtual IWithCteQB CreateWithCteQB()

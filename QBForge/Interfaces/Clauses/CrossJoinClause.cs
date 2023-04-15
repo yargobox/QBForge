@@ -7,8 +7,9 @@ namespace QBForge.Interfaces.Clauses
 		public override string? Key => LabelAs;
 		public string LabelAs { get; }
 
-		public CrossJoinClause(TableClause tableClause, string labelAs) : base(tableClause) => LabelAs = labelAs;
-		public CrossJoinClause(SubQueryClause subQueryClause, string labelAs) : base(subQueryClause) => LabelAs = labelAs;
+		public CrossJoinClause(TableClause tableClause, string labelAs) : this((Clause)tableClause, labelAs) { }
+		public CrossJoinClause(SubQueryClause subQueryClause, string labelAs) : this((Clause)subQueryClause, labelAs) { }
+		protected CrossJoinClause(Clause clause, string labelAs) : base(clause) => LabelAs = labelAs;
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -38,6 +39,20 @@ namespace QBForge.Interfaces.Clauses
 				render
 					.TryAppendLine()
 					.TryAppendCurrentIndent(1).Append(") ").AppendAsLabel(LabelAs);
+			}
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new CrossJoinClause(left, LabelAs);
 			}
 		}
 	}

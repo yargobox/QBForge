@@ -9,5 +9,19 @@
 			context.RenderContext.Append("NOT ");
 			Left.Render(context);
 		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new NegateClause(left);
+			}
+		}
 	}
 }

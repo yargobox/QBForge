@@ -7,7 +7,8 @@ namespace QBForge.Interfaces.Clauses
 		public override string? Key => LabelCte;
 		public string LabelCte { get; }
 
-		public WithCteClause(string labelCte, SubQueryClause subQueryClause) : base(subQueryClause) => LabelCte = labelCte;
+		public WithCteClause(string labelCte, SubQueryClause subQueryClause) : this(labelCte, (Clause)subQueryClause) { }
+		protected WithCteClause(string labelCte, Clause clause) : base(clause) => LabelCte = labelCte;
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -30,6 +31,20 @@ namespace QBForge.Interfaces.Clauses
 			render
 				.TryAppendLine()
 				.TryAppendCurrentIndent().Append(')');
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new WithCteClause(LabelCte, left);
+			}
 		}
 	}
 }

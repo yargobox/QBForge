@@ -15,5 +15,20 @@ namespace QBForge.Interfaces.Clauses
 		{
 			Handler.DynamicInvoke(context.RenderContext, Left, Right);
 		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+			var right = Right.Clone();
+
+			if (object.ReferenceEquals(left, Left) && object.ReferenceEquals(right, Right))
+			{
+				return this;
+			}
+			else
+			{
+				return new BinaryHandlerClause((BinaryOperator)Handler, left, right);
+			}
+		}
 	}
 }

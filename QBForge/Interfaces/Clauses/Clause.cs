@@ -27,7 +27,9 @@ namespace QBForge.Interfaces.Clauses
 		public virtual IEnumerator<Clause> GetEnumerator() => (Clauses ?? Enumerable.Empty<Clause>()).GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		public override string ToString()
+		public virtual Clause Clone() => throw new NotSupportedException();
+
+		public override string? ToString()
 		{
 			var context = ProviderBase.Default.CreateBuildQueryContext(ReadabilityLevels.High);
 			Render(context);

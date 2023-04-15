@@ -15,5 +15,20 @@
 		{
 			return string.Concat(Left.ToString(), " AND ", Right.ToString());
 		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+			var right = Right.Clone();
+
+			if (object.ReferenceEquals(left, Left) && object.ReferenceEquals(right, Right))
+			{
+				return this;
+			}
+			else
+			{
+				return new AndAlsoClause(left, right);
+			}
+		}
 	}
 }

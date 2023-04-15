@@ -1,6 +1,8 @@
-﻿namespace QBForge.Interfaces
+﻿using System;
+
+namespace QBForge.Interfaces
 {
-	public interface IQueryBuilder
+	public interface IQueryBuilder : ICloneable
 	{
 		IQBContext Context { get; }
 

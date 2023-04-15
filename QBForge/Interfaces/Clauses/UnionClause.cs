@@ -15,7 +15,8 @@ namespace QBForge.Interfaces.Clauses
 
 		public string UnionMethod { get; }
 
-		public UnionClause(string unionMethod, SubQueryClause subQuery) : base(subQuery) => UnionMethod = unionMethod;
+		public UnionClause(string unionMethod, SubQueryClause subQuery) : this(unionMethod, (Clause)subQuery) { }
+		protected UnionClause(string unionMethod, Clause clause) : base(clause) => UnionMethod = unionMethod;
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -38,6 +39,20 @@ namespace QBForge.Interfaces.Clauses
 			render
 				.TryAppendLine()
 				.TryAppendCurrentIndent().Append(')');
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new UnionClause(UnionMethod, left);
+			}
 		}
 	}
 }

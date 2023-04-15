@@ -1,4 +1,6 @@
-﻿namespace QBForge.Interfaces.Clauses
+﻿using System.Reflection.Emit;
+
+namespace QBForge.Interfaces.Clauses
 {
 	public class DataEntryClause : ValueClause<DataEntry>
 	{
@@ -22,6 +24,11 @@
 		public override string ToString()
 		{
 			return Value.ToString();
+		}
+
+		public override Clause Clone()
+		{
+			return this;
 		}
 	}
 }

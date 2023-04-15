@@ -12,5 +12,10 @@ namespace QBForge.Interfaces.Clauses
 		{
 			Handler.DynamicInvoke(context.RenderContext);
 		}
+
+		public override Clause Clone()
+		{
+			return this;
+		}
 	}
 }

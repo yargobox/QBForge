@@ -12,5 +12,19 @@ namespace QBForge.Interfaces.Clauses
 
 			context.RenderContext.Provider.Build(Value, context);
 		}
+
+		public override Clause Clone()
+		{
+			var clone = (IQueryBuilder)Value.Clone();
+
+			if (object.ReferenceEquals(clone, Value))
+			{
+				return this;
+			}
+			else
+			{
+				return new SubQueryClause(clone);
+			}
+		}
 	}
 }

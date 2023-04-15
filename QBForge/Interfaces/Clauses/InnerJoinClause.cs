@@ -7,8 +7,9 @@ namespace QBForge.Interfaces.Clauses
 		public override string? Key => LabelAs;
 		public string LabelAs { get; }
 
-		public InnerJoinClause(TableClause tableClause, string labelAs) : base(tableClause, new OnClause()) => LabelAs = labelAs;
-		public InnerJoinClause(SubQueryClause subQueryClause, string labelAs) : base(subQueryClause, new OnClause()) => LabelAs = labelAs;
+		public InnerJoinClause(TableClause tableClause, string labelAs) : this((Clause)tableClause, new OnClause(), labelAs) { }
+		public InnerJoinClause(SubQueryClause subQueryClause, string labelAs) : this((Clause)subQueryClause, new OnClause(), labelAs) { }
+		protected InnerJoinClause(Clause clause, Clause onClause, string labelAs) : base(clause, onClause) => LabelAs = labelAs;
 
 		public override void Render(IBuildQueryContext context)
 		{
@@ -52,6 +53,21 @@ namespace QBForge.Interfaces.Clauses
 			finally
 			{
 				render.CurrentIndent -= 1;
+			}
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+			var right = Right.Clone();
+
+			if (object.ReferenceEquals(left, Left) && object.ReferenceEquals(right, Right))
+			{
+				return this;
+			}
+			else
+			{
+				return new InnerJoinClause(left, right, LabelAs);
 			}
 		}
 	}

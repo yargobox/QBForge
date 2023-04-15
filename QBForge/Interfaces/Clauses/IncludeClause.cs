@@ -28,11 +28,25 @@
 			return string.IsNullOrEmpty(tableLabel) ? nameOrLabelAs : string.Concat(tableLabel, "\b", nameOrLabelAs);
 		}
 
-		public override string ToString()
+		public override string? ToString()
 		{
 			return string.IsNullOrEmpty(LabelAs)
 				? Left.ToString()
 				: string.Concat(Left.ToString(), " AS ", LabelAs!);
+		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+
+			if (object.ReferenceEquals(left, Left))
+			{
+				return this;
+			}
+			else
+			{
+				return new IncludeClause(Key, left, LabelAs);
+			}
 		}
 	}
 }

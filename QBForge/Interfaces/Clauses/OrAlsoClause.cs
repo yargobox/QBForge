@@ -50,5 +50,20 @@ namespace QBForge.Interfaces.Clauses
 
 			return sb.ToString();
 		}
+
+		public override Clause Clone()
+		{
+			var left = Left.Clone();
+			var right = Right.Clone();
+
+			if (object.ReferenceEquals(left, Left) && object.ReferenceEquals(right, Right))
+			{
+				return this;
+			}
+			else
+			{
+				return new OrAlsoClause(left, right);
+			}
+		}
 	}
 }
