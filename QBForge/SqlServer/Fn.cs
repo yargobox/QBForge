@@ -2,7 +2,7 @@
 using QBForge.Provider;
 using QBForge.Provider.Clauses;
 
-namespace QBForge.PostgreSql
+namespace QBForge.SqlServer
 {
 	public static class Fn
 	{

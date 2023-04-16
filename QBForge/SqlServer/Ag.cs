@@ -4,7 +4,7 @@ using QBForge.Provider.Clauses;
 
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 
-namespace QBForge.PostgreSql
+namespace QBForge.SqlServer
 {
 	public static class Ag
 	{

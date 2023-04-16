@@ -1,4 +1,4 @@
-﻿using QBForge.Interfaces;
+﻿using QBForge.Provider;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace QBForge.Extensions.Linq.Expressions
 {
-	internal static class ExpressionExtensions
+    internal static class ExpressionExtensions
 	{
 		public static Expression<Action<object, object?>>? MakeCommonSetter(this MemberInfo memberInfo)
 		{

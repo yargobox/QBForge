@@ -1,8 +1,9 @@
 using QBForge.PostgreSql;
+using QBForge.Provider;
 
 namespace QBForge.Tests
 {
-	[Collection(nameof(SharedTestContextFixture))]
+    [Collection(nameof(SharedTestContextFixture))]
 	public class Q_Tests
 	{
 		private readonly SharedTestContextFixture _sharedContext;
@@ -51,7 +52,7 @@ namespace QBForge.Tests
 				.Map<Category, Brand>((p, c, b) => { p.Category = c; p.Brand = b; return p; })
 			;
 
-			var query = q.ToString(Interfaces.ReadabilityLevels.High);
+			var query = q.ToString(ReadabilityLevels.High);
 			var len = query.Length;
 		}
 
@@ -111,7 +112,7 @@ namespace QBForge.Tests
 				.From("c", "c2")
 			;
 
-			var query = q.ToString(Interfaces.ReadabilityLevels.High);
+			var query = q.ToString(ReadabilityLevels.High);
 			var len = query.Length;
 		}
 

@@ -10,8 +10,8 @@ namespace QBForge.Extensions.Linq
 		public static IReadOnlyDictionary<TKey, TValue> AsOrderedReadOnlyDictionary<TKey, TValue>(this ICollection<TValue> collectionToAttach, Func<TValue, TKey> getItemKey, IEqualityComparer<TKey>? keyComparer = null, bool buildIndex = true)
 		{
 			return buildIndex
-				? new ReadOnlyDictionaryAdapter<TKey, TValue>(collectionToAttach, getItemKey, keyComparer)
-				: new OrderedReadOnlyDictionary<TKey, TValue>(collectionToAttach, getItemKey, keyComparer);
+				? (IReadOnlyDictionary<TKey, TValue>)new ReadOnlyDictionaryAdapter<TKey, TValue>(collectionToAttach, getItemKey, keyComparer)
+				: (IReadOnlyDictionary<TKey, TValue>)new OrderedReadOnlyDictionary<TKey, TValue>(collectionToAttach, getItemKey, keyComparer);
 		}
 
 		private sealed class ReadOnlyDictionaryAdapter<TKey, TValue> : IReadOnlyDictionary<TKey, TValue>
