@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace QBForge.Providers
 {
-	internal partial class SelectQB<T>
+	partial class SelectQB<T>
 	{
 		ISelectQB<T> ISelectQB<T>.Map(Func<T, T> map)
 		{

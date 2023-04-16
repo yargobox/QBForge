@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace QBForge.Providers
 {
-	internal sealed partial class SelectQB<T> : ISelectQB<T>
+	public partial class SelectQB<T> : ISelectQB<T>
 	{
 		private readonly IQBContext _context;
 
@@ -28,7 +28,7 @@ namespace QBForge.Providers
 			return query!;
 		}
 
-		ISelectQB<T> ISelectQB<T>.From(string tableName, string? labelAs, dynamic? parameters)
+		public virtual ISelectQB<T> From(string tableName, string? labelAs, dynamic? parameters = null)
 		{
 			if (string.IsNullOrEmpty(tableName)) throw new ArgumentNullException(nameof(tableName));
 
@@ -41,16 +41,12 @@ namespace QBForge.Providers
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Distinct() => this;
+		public virtual ISelectQB<T> Distinct() => this;
 
-		ISelectQB<T> ISelectQB<T>.Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-		ISelectQB<T> ISelectQB<T>.Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
+		public virtual ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
+		public virtual ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Skip(long skip, string? @label = null) => this;
-		ISelectQB<T> ISelectQB<T>.Take(int take, string? @label = null) => this;
-
-
-		private TSectionClause EnsureSectionClause<TSectionClause>(string section) where TSectionClause : Clause, new()
+		protected TSectionClause EnsureSectionClause<TSectionClause>(string section) where TSectionClause : Clause, new()
 		{
 			var sectionClause = _context.Clause.FirstOrDefault(x => x.Key == section);
 			if (sectionClause == null)
@@ -61,19 +57,14 @@ namespace QBForge.Providers
 			return (TSectionClause)sectionClause;
 		}
 
-		private Clause? GetSectionClause(string section)
+		protected Clause? FindSectionClause(string section)
 		{
 			return _context.Clause.FirstOrDefault(x => x.Key == section);
 		}
 
-		private TSectionClause? GetSectionClause<TSectionClause>(string section) where TSectionClause : Clause
-		{
-			return (TSectionClause?)_context.Clause.FirstOrDefault(x => x.Key == section);
-		}
-
 		private OnClause? GetJoinOnClause(string joinedTableLabel, Clause? joinSection = null)
 		{
-			joinSection ??= GetSectionClause(ClauseSections.Join);
+			joinSection ??= FindSectionClause(ClauseSections.Join);
 
 			var joinClause = joinSection?.FirstOrDefault(x => x.Key == joinedTableLabel);
 
@@ -82,9 +73,9 @@ namespace QBForge.Providers
 
 		private bool TableLabelExists(string labelAs, Clause? fromSection = null, Clause? joinSection = null, Clause? withCteSection = null)
 		{
-			var concreteFromSection = (fromSection ?? GetSectionClause(ClauseSections.From)) as FromSectionClause;
-			joinSection ??= GetSectionClause(ClauseSections.Join);
-			withCteSection ??= GetSectionClause(ClauseSections.WithCte);
+			var concreteFromSection = (fromSection ?? FindSectionClause(ClauseSections.From)) as FromSectionClause;
+			joinSection ??= FindSectionClause(ClauseSections.Join);
+			withCteSection ??= FindSectionClause(ClauseSections.WithCte);
 
 			return concreteFromSection?.Any(x => x.Key == labelAs) == true
 				|| joinSection?.Any(x => x.Key == labelAs) == true

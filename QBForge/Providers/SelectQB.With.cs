@@ -4,9 +4,9 @@ using System;
 
 namespace QBForge.Providers
 {
-	internal partial class SelectQB<T>
+	partial class SelectQB<T>
 	{
-		ISelectQB<T> ISelectQB<T>.With<TCte>(string labelCte, ISelectQB<TCte> subQuery)
+		public virtual ISelectQB<T> With<TCte>(string labelCte, ISelectQB<TCte> subQuery)
 			=> AddWithClause(subQuery, labelCte);
 
 		private ISelectQB<T> AddWithClause<TCte>(ISelectQB<TCte> subQuery, string labelCte)

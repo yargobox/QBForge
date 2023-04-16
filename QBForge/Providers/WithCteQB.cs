@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace QBForge.Providers
 {
-	internal sealed class WithCteQB : IWithCteQB
+	public class WithCteQB : IWithCteQB
 	{
 		private readonly IQBContext _context;
 
@@ -27,7 +27,7 @@ namespace QBForge.Providers
 			return query!;
 		}
 
-		public IWithCteQB With<TCte>(string labelCte, ISelectQB<TCte> subQuery)
+		public virtual IWithCteQB With<TCte>(string labelCte, ISelectQB<TCte> subQuery)
 		{
 			if (string.IsNullOrEmpty(labelCte)) throw new ArgumentNullException(nameof(labelCte));
 			if (subQuery == null) throw new ArgumentNullException(nameof(subQuery));
@@ -38,7 +38,7 @@ namespace QBForge.Providers
 			return this;
 		}
 
-		public ISelectQB<T> Select<T>(string tableName, string? labelAs = null, dynamic? parameters = null)
+		public virtual ISelectQB<T> Select<T>(string tableName, string? labelAs = null, dynamic? parameters = null)
 		{
 			if (string.IsNullOrEmpty(tableName)) throw new ArgumentNullException(nameof(tableName));
 
@@ -49,7 +49,7 @@ namespace QBForge.Providers
 			return selectQB.From(tableName, labelAs, parameters);
 		}
 
-		public object Clone()
+		public virtual object Clone()
 		{
 			return new WithCteQB((IQBContext)Context.Clone());
 		}

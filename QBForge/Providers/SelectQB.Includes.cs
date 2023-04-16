@@ -8,9 +8,9 @@ using System.Linq.Expressions;
 
 namespace QBForge.Providers
 {
-	internal partial class SelectQB<T>
+	partial class SelectQB<T>
 	{
-		ISelectQB<T> ISelectQB<T>.IncludeAll(string? tableLabel)
+		public virtual ISelectQB<T> IncludeAll(string? tableLabel)
 		{
 			var key = IncludeClause.MakeKey(tableLabel, "*");
 
@@ -44,7 +44,7 @@ namespace QBForge.Providers
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include(Expression<Func<T, object?>> de, string? asLabel)
+		public virtual ISelectQB<T> Include(Expression<Func<T, object?>> de, string? labelAs)
 		{
 			var (paramName, memberName) = de.GetMemberName(true);
 
@@ -59,13 +59,13 @@ namespace QBForge.Providers
 			else
 			{
 				var mappedName = _context.Provider.GetMappedName<T>(memberName);
-				AddIncludeClause(paramName, memberName, mappedName, asLabel);
+				AddIncludeClause(paramName, memberName, mappedName, labelAs);
 			}
 
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(Expression<Func<TJoined, object?>> de, string? asLabel)
+		public virtual ISelectQB<T> Include<TJoined>(Expression<Func<TJoined, object?>> de, string? labelAs)
 		{
 			var (paramName, memberName) = de.GetMemberName(true);
 
@@ -80,44 +80,44 @@ namespace QBForge.Providers
 			else
 			{
 				var mappedName = _context.Provider.GetMappedName<TJoined>(memberName);
-				AddIncludeClause(paramName, memberName, mappedName, asLabel);
+				AddIncludeClause(paramName, memberName, mappedName, labelAs);
 			}
 
 			return this;
 		}
 
-		ISelectQB<T> ISelectQB<T>.Include(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? asLabel) => this;
+		public virtual ISelectQB<T> Include(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? labelAs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
+		public virtual ISelectQB<T> Include<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDe func, Expression<Func<T, object?>> de, string? asLabel) => this;
+		public virtual ISelectQB<T> Include(FuncCallClauseDe func, Expression<Func<T, object?>> de, string? labelAs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> de, string? asLabel) => this;
+		public virtual ISelectQB<T> Include<TJoined>(FuncCallClauseDe func, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? asLabel) => this;
+		public virtual ISelectQB<T> Include(FuncCallClauseDeV func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
 
-		ISelectQB<T> ISelectQB<T>.Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? asLabel) => this;
+		public virtual ISelectQB<T> Include<TJoined>(FuncCallClauseDeV func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
 
 
-		private void AddIncludeClause(string? tableLabel, string memberName, string mappedName, string? asLabel = null)
+		private void AddIncludeClause(string? tableLabel, string memberName, string mappedName, string? labelAs = null)
 		{
 			if (string.IsNullOrEmpty(tableLabel) || tableLabel == "_")
 			{
 				tableLabel = null;
 			}
-			if (string.IsNullOrEmpty(asLabel))
+			if (string.IsNullOrEmpty(labelAs))
 			{
-				asLabel = memberName;
+				labelAs = memberName;
 			}
 
-			var key = IncludeClause.MakeKey(_context.MapNextTo, asLabel!);
+			var key = IncludeClause.MakeKey(_context.MapNextTo, labelAs!);
 
 			var dataEntry = new DataEntry(tableLabel, mappedName);
 
 			Clause includeClause = new DataEntryClause(dataEntry);
-			if (includeClause.Key != key || dataEntry.Name != asLabel)
+			if (includeClause.Key != key || dataEntry.Name != labelAs)
 			{
-				includeClause = new IncludeClause(key, includeClause, asLabel);
+				includeClause = new IncludeClause(key, includeClause, labelAs);
 			}
 
 			var includeSection = EnsureSectionClause<IncludeSectionClause>(ClauseSections.Include);

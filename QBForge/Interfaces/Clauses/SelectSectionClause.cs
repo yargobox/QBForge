@@ -73,7 +73,6 @@ namespace QBForge.Interfaces.Clauses
 			ClauseSections.WithCte,
 			ClauseSections.Select,
 			ClauseSections.Distinct,
-			ClauseSections.WithTies,
 			ClauseSections.Include,
 			ClauseSections.From,
 			ClauseSections.Join,
@@ -81,8 +80,9 @@ namespace QBForge.Interfaces.Clauses
 			ClauseSections.GroupBy,
 			ClauseSections.Having,
 			ClauseSections.OrderBy,
-			ClauseSections.Skip,
-			ClauseSections.Take,
+			ClauseSections.Limit,
+			ClauseSections.Offset,
+			ClauseSections.WithTies,
 			ClauseSections.Options,
 			ClauseSections.Union
 		};

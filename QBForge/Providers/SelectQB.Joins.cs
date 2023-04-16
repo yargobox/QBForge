@@ -1,35 +1,34 @@
 ﻿using QBForge.Interfaces;
 using QBForge.Interfaces.Clauses;
 using System;
-using System.Linq;
 
 namespace QBForge.Providers
 {
-	internal partial class SelectQB<T>
+	partial class SelectQB<T>
 	{
-		ISelectQB<T> ISelectQB<T>.Join<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
+		public virtual ISelectQB<T> Join<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
 			=> AddJoinClause(subQuery, labelAs, (subQueryClause, labelAs) => new InnerJoinClause(subQueryClause, labelAs));
-		ISelectQB<T> ISelectQB<T>.Join<TJoined>(string tableName, string labelAs)
+		public virtual ISelectQB<T> Join<TJoined>(string tableName, string labelAs)
 			=> AddJoinClause(tableName, labelAs, (tableClause, labelAs) => new InnerJoinClause(tableClause, labelAs));
 
-		ISelectQB<T> ISelectQB<T>.LeftJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
+		public virtual ISelectQB<T> LeftJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
 			=> AddJoinClause(subQuery, labelAs, (subQueryClause, labelAs) => new LeftJoinClause(subQueryClause, labelAs));
-		ISelectQB<T> ISelectQB<T>.LeftJoin<TJoined>(string tableName, string labelAs)
+		public virtual ISelectQB<T> LeftJoin<TJoined>(string tableName, string labelAs)
 			=> AddJoinClause(tableName, labelAs, (tableClause, labelAs) => new LeftJoinClause(tableClause, labelAs));
 
-		ISelectQB<T> ISelectQB<T>.RightJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
+		public virtual ISelectQB<T> RightJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
 			=> AddJoinClause(subQuery, labelAs, (subQueryClause, labelAs) => new RightJoinClause(subQueryClause, labelAs));
-		ISelectQB<T> ISelectQB<T>.RightJoin<TJoined>(string tableName, string labelAs)
+		public virtual ISelectQB<T> RightJoin<TJoined>(string tableName, string labelAs)
 			=> AddJoinClause(tableName, labelAs, (tableClause, labelAs) => new RightJoinClause(tableClause, labelAs));
 
-		ISelectQB<T> ISelectQB<T>.FullJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
+		public virtual ISelectQB<T> FullJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
 			=> AddJoinClause(subQuery, labelAs, (subQueryClause, labelAs) => new FullJoinClause(subQueryClause, labelAs));
-		ISelectQB<T> ISelectQB<T>.FullJoin<TJoined>(string tableName, string labelAs)
+		public virtual ISelectQB<T> FullJoin<TJoined>(string tableName, string labelAs)
 			=> AddJoinClause(tableName, labelAs, (tableClause, labelAs) => new FullJoinClause(tableClause, labelAs));
 
-		ISelectQB<T> ISelectQB<T>.CrossJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
+		public virtual ISelectQB<T> CrossJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs)
 			=> AddJoinClause(subQuery, labelAs, (subQueryClause, labelAs) => new CrossJoinClause(subQueryClause, labelAs));
-		ISelectQB<T> ISelectQB<T>.CrossJoin<TJoined>(string tableName, string labelAs)
+		public virtual ISelectQB<T> CrossJoin<TJoined>(string tableName, string labelAs)
 			=> AddJoinClause(tableName, labelAs, (tableClause, labelAs) => new CrossJoinClause(tableClause, labelAs));
 
 		private ISelectQB<T> AddJoinClause(string tableName, string labelAs, Func<TableClause, string, Clause> joinClauseFactory)

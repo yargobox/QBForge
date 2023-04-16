@@ -86,8 +86,8 @@ namespace QBForge.Interfaces
 		ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
 		ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
 
-		ISelectQB<T> Skip(long offset, string? @label = null);
-		ISelectQB<T> Take(int limit, string? @label = null);
+		ISelectQB<T> Offset(long skip);
+		ISelectQB<T> Limit(long take);
 
 		ISelectQB<T> Map(Func<T, T> map);
 		ISelectQB<T> Map<TSecond>(Func<T, TSecond, T> map);

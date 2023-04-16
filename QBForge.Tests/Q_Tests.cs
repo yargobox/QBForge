@@ -45,6 +45,9 @@ namespace QBForge.Tests
 					.Having(Ag.MIN, p => p.Price, Op.Greater, 15.00)
 				)
 
+				.Offset(10)
+				.Limit(20)
+
 				.Map<Category, Brand>((p, c, b) => { p.Category = c; p.Brand = b; return p; })
 			;
 
@@ -82,8 +85,8 @@ namespace QBForge.Tests
 
 				.OrderBy(p => p.Price, Ob.ASC)
 
-				.Skip(10)
-				.Take(20)
+				.Offset(10)
+				.Limit(20)
 
 				.UnionAll(
 					QB.Select<Product>("products")
