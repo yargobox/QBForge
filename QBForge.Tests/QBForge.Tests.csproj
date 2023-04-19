@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net6.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(IsWindows)'=='true'">$(TargetFrameworks);net472</TargetFrameworks>
-		<StandardTargetFrameworks>netstandard2.0;netstandard2.1</StandardTargetFrameworks>
+		<StandardTargetFrameworks>netstandard2.0</StandardTargetFrameworks>
 		<StandardTargetFrameworks Condition="'$(IsWindows)'=='true'">$(StandardTargetFrameworks);net472</StandardTargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -56,5 +56,29 @@
 	<PropertyGroup Condition="'$(IsOSX)'=='true'">
 		<DefineConstants>$(DefineConstants);MACOS</DefineConstants>
 	</PropertyGroup>
+	
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net472' ">
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+		<Reference Include="System.ComponentModel.DataAnnotations" />
+	</ItemGroup>
+	
+<!--
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+		<DefineConstants>$(DefineConstants);NETSTD2</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net472' ">
+		<DefineConstants>$(DefineConstants);NET472</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<DefineConstants>$(DefineConstants);NET6</DefineConstants>
+	</PropertyGroup>
+-->
 
 </Project>

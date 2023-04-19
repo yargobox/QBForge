@@ -23,8 +23,16 @@
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 	</ItemGroup>
 
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net6.0' ">
+	  <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+	  <Reference Include="System.ComponentModel.DataAnnotations" />
+	</ItemGroup>
+
 	<ItemGroup>
-	  <Folder Include="Provider.Clauses\SqlServer\" />
+		<Folder Include="Provider.Clauses\SqlServer\" />
 	</ItemGroup>
 
 </Project>

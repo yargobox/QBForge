@@ -1,7 +1,9 @@
 ﻿using QBForge.Extensions.Linq.Expressions;
+using QBForge.Extensions.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -18,10 +20,11 @@ namespace QBForge.Provider.Configuration
 
 	public class MemberMappingInfo
 	{
-		public MemberMappingInfo(string name, string mappedName, Type memberType, Type declaringType, MapMemberAs mapAs, Action<object, object?>? setter)
+		public MemberMappingInfo(string name, string mappedName, bool isMappedNameExpected, Type memberType, Type declaringType, MapMemberAs mapAs, Action<object, object?>? setter)
 		{
 			Name = name;
 			MappedName = mappedName;
+			IsMappedNameExpected = isMappedNameExpected;
 			MemberType = memberType;
 			DeclaringType = declaringType;
 			MapAs = mapAs;
@@ -30,6 +33,7 @@ namespace QBForge.Provider.Configuration
 
 		public string Name { get; }
 		public string MappedName { get; }
+		public bool IsMappedNameExpected { get; }
 		public Type MemberType { get; }
 		public Type DeclaringType { get; }
 		public MapMemberAs MapAs { get; }
@@ -38,168 +42,13 @@ namespace QBForge.Provider.Configuration
 
 	public class DocumentMapping
 	{
-		protected virtual IEnumerable<MemberInfo> GetAllMembers(Type documentType)
+		protected virtual HashSet<Type> KnownDocumentTypes { get; set; }
+		protected virtual HashSet<Type> KnownNonDocumentTypes { get; set; }
+
+		public DocumentMapping()
 		{
-			return documentType.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(x => x.CanWrite && x.CanRead);
-		}
-
-		protected virtual bool IsKnownNonDocumentType(Type type)
-		{
-			return type.IsEnum || Static._standardTypes.Contains(type) || IsDateTimeOnlyOrOriginatedType(type);
-		}
-
-		protected virtual bool IsKnownDocumentType(Type type)
-		{
-			return false;
-		}
-
-		protected virtual bool IsDocumentType(Type type)
-		{
-			if (type.FullName?.StartsWith("System.ValueTuple`", StringComparison.Ordinal) == true) return false;
-
-			return true;
-		}
-
-		protected virtual string GetMemberMappedName(MemberInfo memberInfo)
-		{
-			return memberInfo.Name;
-		}
-
-		protected virtual MapMemberAs GetMemberMappingType(MemberInfo memberInfo)
-		{
-			var type = memberInfo is PropertyInfo pi
-				? pi.PropertyType
-				: memberInfo is FieldInfo fi
-					? fi.FieldType
-					: throw new InvalidOperationException();
-
-			var mapAs = IsKnownNonDocumentType(type)
-				? MapMemberAs.Element
-				: IsKnownDocumentType(type)
-					? MapMemberAs.Document
-					: MapMemberAs.None;
-
-			if (mapAs == MapMemberAs.None)
-			{
-				Type openType;
-				foreach (var i in type.GetInterfaces())
-				{
-					if (i.IsGenericType)
-					{
-						openType = i.GetGenericTypeDefinition();
-						if (openType == typeof(IEnumerable<>))
-						{
-							var itemType = openType.GetGenericArguments()[0];
-
-							if (IsKnownNonDocumentType(itemType))
-							{
-								mapAs = MapMemberAs.Element;
-								break;
-							}
-							else if (IsKnownDocumentType(itemType))
-							{
-								mapAs = MapMemberAs.DocumentCollection;
-								break;
-							}
-						}
-						else if (openType == typeof(Nullable<>))
-						{
-							var itemType = openType.GetGenericArguments()[0];
-
-							if (IsKnownNonDocumentType(itemType))
-							{
-								mapAs = MapMemberAs.Element;
-								break;
-							}
-							else if (IsKnownDocumentType(itemType))
-							{
-								mapAs = MapMemberAs.Document;
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			if (mapAs == MapMemberAs.None)
-			{
-				mapAs = IsDocumentType(type) ? MapMemberAs.Document : MapMemberAs.Element;
-			}
-
-			return mapAs;
-		}
-
-		public List<MemberMappingInfo> GetDocumentMappingInfo(Type documentType)
-		{
-			var list = new List<MemberMappingInfo>();
-
-			foreach (var memberInfo in GetAllMembers(documentType))
-			{
-				var type = memberInfo is PropertyInfo pi
-					? pi.PropertyType
-					: memberInfo is FieldInfo fi
-						? fi.FieldType
-						: throw new InvalidOperationException();
-
-				var mappingType = GetMemberMappingType(memberInfo);
-				if (mappingType == MapMemberAs.None)
-				{
-					continue;
-				}
-
-				var mappedName = GetMemberMappedName(memberInfo);
-
-				list.Add(new MemberMappingInfo(
-					memberInfo.Name,
-					mappedName,
-					type,
-					memberInfo.DeclaringType,
-					mappingType,
-					mappingType == MapMemberAs.Document ? memberInfo.MakeCommonSetter()?.Compile() : null
-				));
-			}
-
-			return list;
-		}
-
-		private static bool IsDateTimeOnlyOrOriginatedType(Type type)
-		{
-			var fullName = type.FullName;
-			if (fullName?.StartsWith("System.", StringComparison.Ordinal) == true)
-			{
-				if (fullName?.StartsWith("System.Nullable`", StringComparison.Ordinal) == true)
-				{
-					Type? underType;
-
-					if (type.IsArray)
-					{
-						var elemType = type.GetElementType();
-						if (elemType == null) return false;
-
-						underType = Nullable.GetUnderlyingType(elemType);
-					}
-					else
-					{
-						underType = Nullable.GetUnderlyingType(type);
-					}
-
-					if (underType == null) return false;
-
-					fullName = underType.FullName;
-				}
-
-				if (fullName == "System.DateOnly" || fullName == "System.TimeOnly" || fullName == "System.DateOnly[]" || fullName == "System.TimeOnly[]")
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private static class Static
-		{
-			public static readonly HashSet<Type> _standardTypes = new HashSet<Type>()
+			KnownDocumentTypes = new HashSet<Type>();
+			KnownNonDocumentTypes = new HashSet<Type>()
 			{
 				// Value types
 				//
@@ -230,20 +79,12 @@ namespace QBForge.Provider.Configuration
 				typeof(double?),
 				typeof(decimal),
 				typeof(decimal?),
-				//typeof(nint),
-				//typeof(nint?),
-				//typeof(nuint),
-				//typeof(nuint?),
 				typeof(Guid),
 				typeof(Guid?),
-				//typeof(DateOnly),
-				//typeof(DateOnly?),
 				typeof(DateTime),
 				typeof(DateTime?),
 				typeof(DateTimeOffset),
 				typeof(DateTimeOffset?),
-				//typeof(TimeOnly),
-				//typeof(TimeOnly?),
 				typeof(TimeSpan),
 				typeof(TimeSpan?),
 				typeof(IntPtr),
@@ -291,20 +132,12 @@ namespace QBForge.Provider.Configuration
 				typeof(double?[]),
 				typeof(decimal[]),
 				typeof(decimal?[]),
-				//typeof(nint[]),
-				//typeof(nint?[]),
-				//typeof(nuint[]),
-				//typeof(nuint?[]),
 				typeof(Guid[]),
 				typeof(Guid?[]),
-				//typeof(DateOnly[]),
-				//typeof(DateOnly?[]),
 				typeof(DateTime[]),
 				typeof(DateTime?[]),
 				typeof(DateTimeOffset[]),
 				typeof(DateTimeOffset?[]),
-				//typeof(TimeOnly[]),
-				//typeof(TimeOnly?[]),
 				typeof(TimeSpan[]),
 				typeof(TimeSpan?[]),
 				typeof(IntPtr[]),
@@ -312,6 +145,142 @@ namespace QBForge.Provider.Configuration
 				typeof(UIntPtr[]),
 				typeof(UIntPtr?[])
 			};
+
+			// DateOnly and TimeOnly support
+			//
+
+			Type? tn, t = (Type?)typeof(DateTime).Assembly.GetType("System.DateOnly", false);
+			if (t != null)
+			{
+				KnownNonDocumentTypes.Add(t);
+				KnownNonDocumentTypes.Add(t.MakeArrayType());
+				KnownNonDocumentTypes.Add(tn = typeof(Nullable<>).MakeGenericType(t));
+				KnownNonDocumentTypes.Add(tn.MakeArrayType());
+
+				t = (Type)typeof(DateTime).Assembly.GetType("System.TimeOnly", true)!;
+				KnownNonDocumentTypes.Add(t);
+				KnownNonDocumentTypes.Add(t.MakeArrayType());
+				KnownNonDocumentTypes.Add(tn = typeof(Nullable<>).MakeGenericType(t));
+				KnownNonDocumentTypes.Add(tn.MakeArrayType());
+			}
+		}
+
+		protected virtual IEnumerable<MemberInfo> GetAllMembers(Type documentType)
+		{
+			var members = documentType
+				.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				.Where(x => !x.IsDefined(typeof(NotMappedAttribute)) && (x.GetSetMethod(true)?.IsPublic == true || x.IsDefined(typeof(ColumnAttribute))))
+				.Cast<MemberInfo>()
+				.Union
+				(
+					documentType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+					.Where(x => x.IsDefined(typeof(ColumnAttribute)))
+				)
+				.Select(x => (member: x, order: x.GetCustomAttribute<ColumnAttribute>()?.Order ?? 0))
+				.ToArray();
+
+			foreach (var m in members.Where(x => x.order <= 0))
+			{
+				yield return m.member;
+			}
+
+			foreach (var m in members.Where(x => x.order > 0).OrderBy(x => x.order))
+			{
+				yield return m.member;
+			}
+		}
+
+		protected virtual bool IsKnownNonDocumentType(Type type)
+		{
+			return type.IsEnum || KnownNonDocumentTypes.Contains(type);
+		}
+
+		protected virtual bool IsKnownDocumentType(Type type)
+		{
+			return KnownDocumentTypes.Contains(type);
+		}
+
+		protected virtual MapMemberAs GetMemberMappingType(MemberInfo memberInfo)
+		{
+			var type = memberInfo.GetPropertyOrFieldType();
+			MapMemberAs mapAs = MapMemberAs.None;
+
+			if (IsKnownNonDocumentType(type))
+			{
+				mapAs = MapMemberAs.Element;
+			}
+			else if (IsKnownDocumentType(type))
+			{
+				mapAs = MapMemberAs.Document;
+			}
+			else
+			{
+				var trueType = Nullable.GetUnderlyingType(type) ?? type;
+				var itemTypes = trueType.GetEnumerableItemTypes().ToArray();
+
+				foreach (var itemType in itemTypes)
+				{
+					if (IsKnownNonDocumentType(itemType))
+					{
+						mapAs = MapMemberAs.Element; break;
+					}
+					else if (IsKnownDocumentType(itemType))
+					{
+						mapAs = MapMemberAs.DocumentCollection; break;
+					}
+				}
+
+				if (mapAs == MapMemberAs.None)
+				{
+					mapAs = GetDefaultMemberMappingType(memberInfo, type, trueType, itemTypes);
+				}
+			}
+
+			return mapAs;
+		}
+
+		protected virtual MapMemberAs GetDefaultMemberMappingType(MemberInfo memberInfo, Type type, Type trueType, Type[] itemTypes)
+		{
+			return itemTypes.Length > 0 ? MapMemberAs.DocumentCollection : MapMemberAs.Document;
+		}
+
+		protected virtual string GetMemberMappedName(MemberInfo memberInfo, out bool isMappedNameExpected)
+		{
+			isMappedNameExpected = false;
+
+			var mappedName = memberInfo.GetCustomAttribute<ColumnAttribute>()?.Name;
+
+			return string.IsNullOrEmpty(mappedName) ? memberInfo.Name : mappedName!;
+		}
+
+		public virtual List<MemberMappingInfo> GetDocumentMappingInfo(Type documentType)
+		{
+			var list = new List<MemberMappingInfo>();
+
+			foreach (var memberInfo in GetAllMembers(documentType))
+			{
+				var type = memberInfo.GetPropertyOrFieldType();
+
+				var mappingType = GetMemberMappingType(memberInfo);
+				if (mappingType == MapMemberAs.None)
+				{
+					continue;
+				}
+
+				var mappedName = GetMemberMappedName(memberInfo, out var isMappedNameExpected);
+
+				list.Add(new MemberMappingInfo(
+					memberInfo.Name,
+					mappedName,
+					isMappedNameExpected,
+					type,
+					memberInfo.DeclaringType,
+					mappingType,
+					mappingType.HasFlag(MapMemberAs.Document) ? memberInfo.MakeCommonSetter()?.Compile() : null
+				));
+			}
+
+			return list;
 		}
 	}
 }
