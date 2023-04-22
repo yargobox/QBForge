@@ -1,6 +1,7 @@
 ﻿using QBForge.Extensions;
 using QBForge.Provider;
 using QBForge.Provider.Clauses;
+using System;
 
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 
@@ -42,6 +43,11 @@ namespace QBForge.PostgreSql
 		public static IAggrRender AVG(this IAggrRender query, Clause arg)
 		{
 			query.Append("AVG(").AppendArgument(arg).Append(')'); return query;
+		}
+
+		public static T AVG<T>(T arg)
+		{
+			throw new InvalidOperationException();
 		}
 	}
 }

@@ -49,10 +49,10 @@ namespace QBForge.Provider
 		public virtual ISelectQB<T> OrWhere<T2, T3>(Expression<Func<T3, object?>> lhs, BinaryOperator op, Expression<Func<T2, object?>> rhs)
 			=> AddWhereCond(true, new BinaryHandlerClause(op, lhs.ToDataEntry(), rhs.ToDataEntry()));
 
-		public virtual ISelectQB<T> Where<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
+		public virtual ISelectQB<T> WhereComputed<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
 			=> AddWhereCond(false, new UnaryHandlerClause(op, new SubQueryClause(subQuery)));
 
-		public virtual ISelectQB<T> OrWhere<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
+		public virtual ISelectQB<T> OrWhereComputed<T2>(UnaryOperator op, ISelectQB<T2> subQuery)
 			=> AddWhereCond(true, new UnaryHandlerClause(op, new SubQueryClause(subQuery)));
 
 		private ISelectQB<T> AddWhereCond(bool or, Clause right, Clause? whereSection = null)

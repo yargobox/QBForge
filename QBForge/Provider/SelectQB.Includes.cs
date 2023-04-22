@@ -85,17 +85,17 @@ namespace QBForge.Provider
 			return this;
 		}
 
-		public virtual ISelectQB<T> Include(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed(UnaryAggrHandler aggregate, Expression<Func<T, object?>> de, string? labelAs) => this;
 
-		public virtual ISelectQB<T> Include<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed<TJoined>(UnaryAggrHandler aggregate, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
 
-		public virtual ISelectQB<T> Include(UnaryFuncHandler func, Expression<Func<T, object?>> de, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed(UnaryFuncHandler func, Expression<Func<T, object?>> de, string? labelAs) => this;
 
-		public virtual ISelectQB<T> Include<TJoined>(UnaryFuncHandler func, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed<TJoined>(UnaryFuncHandler func, Expression<Func<TJoined, object?>> de, string? labelAs) => this;
 
-		public virtual ISelectQB<T> Include(BinaryFuncHandler func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed(BinaryFuncHandler func, Expression<Func<T, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
 
-		public virtual ISelectQB<T> Include<TJoined>(BinaryFuncHandler func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
+		public virtual ISelectQB<T> IncludeComputed<TJoined>(BinaryFuncHandler func, Expression<Func<TJoined, object?>> deArg1, dynamic? arg2, string? labelAs) => this;
 
 
 		private void AddIncludeClause(string? tableLabel, string memberName, string mappedName, string? labelAs = null)

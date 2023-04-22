@@ -25,25 +25,25 @@ namespace QBForge.Provider
 			return AddOnCond(lde.RefLabel!, true, new UnaryHandlerClause(op, lde));
 		}
 
-		public virtual ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op)
+		public virtual ISelectQB<T> On<TJoin>(Expression<Func<TJoin, object?>> lhs, UnaryOperator op)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, false, new UnaryHandlerClause(op, lde));
 		}
 
-		public virtual ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, UnaryOperator op)
+		public virtual ISelectQB<T> OrOn<TJoin>(Expression<Func<TJoin, object?>> lhs, UnaryOperator op)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, true, new UnaryHandlerClause(op, lde));
 		}
 
-		public virtual ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs)
+		public virtual ISelectQB<T> On<TJoin>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, dynamic rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, false, new BinaryHandlerClause(op, lde, rhs));
 		}
 
-		public virtual ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, dynamic rhs)
+		public virtual ISelectQB<T> OrOn<TJoin>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, dynamic rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, true, new BinaryHandlerClause(op, lde, rhs));
@@ -61,25 +61,25 @@ namespace QBForge.Provider
 			return AddOnCond(lde.RefLabel!, true, new BinaryHandlerClause(op, lde, rhs));
 		}
 
-		public virtual ISelectQB<T> On<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
+		public virtual ISelectQB<T> On<TJoin>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, false, new BinaryHandlerClause(op, lde, rhs.ToDataEntry()));
 		}
 
-		public virtual ISelectQB<T> OrOn<TJoined>(Expression<Func<TJoined, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
+		public virtual ISelectQB<T> OrOn<TJoin>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, true, new BinaryHandlerClause(op, lde, rhs.ToDataEntry()));
 		}
 
-		public virtual ISelectQB<T> On<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs)
+		public virtual ISelectQB<T> On<TJoin, TJoined>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, Expression<Func<TJoined, object?>> rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, false, new BinaryHandlerClause(op, lde, rhs.ToDataEntry()));
 		}
 
-		public virtual ISelectQB<T> OrOn<TJoined1, TJoined2>(Expression<Func<TJoined2, object?>> lhs, BinaryOperator op, Expression<Func<TJoined1, object?>> rhs)
+		public virtual ISelectQB<T> OrOn<TJoin, TJoined>(Expression<Func<TJoin, object?>> lhs, BinaryOperator op, Expression<Func<TJoined, object?>> rhs)
 		{
 			var lde = lhs.ToDataEntry();
 			return AddOnCond(lde.RefLabel!, true, new BinaryHandlerClause(op, lde, rhs.ToDataEntry()));

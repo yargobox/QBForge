@@ -15,15 +15,15 @@ namespace QBForge.Provider
 		public virtual ISelectQB<T> OrderBy<T2>(Expression<Func<T2, object?>> lhs, UnaryOrderByHandler? ob)
 			=> AddOrderByCond(new UnaryHandlerClause(ob ?? new UnaryOrderByHandler(DefaultOrderBy), lhs.ToDataEntry()));
 
-		public virtual ISelectQB<T> OrderBy(AggrHandler ag, UnaryOrderByHandler? ob)
+		public virtual ISelectQB<T> OrderByComputed(AggrHandler ag, UnaryOrderByHandler? ob)
 			=> AddOrderByCond(new UnaryHandlerClause(ob ?? new UnaryOrderByHandler(DefaultOrderBy),
 				new HandlerClause(ag)));
 
-		public virtual ISelectQB<T> OrderBy(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, UnaryOrderByHandler? ob)
+		public virtual ISelectQB<T> OrderByComputed(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, UnaryOrderByHandler? ob)
 			=> AddOrderByCond(new UnaryHandlerClause(ob ?? new UnaryOrderByHandler(DefaultOrderBy),
 				new UnaryHandlerClause(ag, lhs.ToDataEntry())));
 
-		public virtual ISelectQB<T> OrderBy<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, UnaryOrderByHandler? ob)
+		public virtual ISelectQB<T> OrderByComputed<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, UnaryOrderByHandler? ob)
 			=> AddOrderByCond(new UnaryHandlerClause(ob ?? new UnaryOrderByHandler(DefaultOrderBy),
 				new UnaryHandlerClause(ag, lhs.ToDataEntry())));
 
