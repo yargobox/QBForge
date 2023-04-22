@@ -14,6 +14,15 @@ namespace QBForge.Tests
 		}
 
 		[Fact]
+		public void SelectSkipTake()
+		{
+			var sql = QB.Select<Product>("products").Skip(111).Take(222).ToString();
+			sql = QB.Select<Product>("products").Offset(111).Limit(222).ToString();
+			sql = QB.Select<Product>("products").Offset(111).Limit(222, FetchNext.RowsWithTies).ToString();
+			_ = sql.Length;
+		}
+
+		[Fact]
 		public void Select()
 		{
 			string? sql;
@@ -143,7 +152,7 @@ namespace QBForge.Tests
 			//;
 
 			var query = q.ToString(ReadabilityLevels.High);
-			var len = q.Length;
+			var len = q.ToString()!.Length;
 		}
 
 		//[Fact]

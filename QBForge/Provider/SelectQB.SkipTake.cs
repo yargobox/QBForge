@@ -5,38 +5,42 @@ namespace QBForge.Provider
 {
     partial class SelectQB<T>
 	{
-		public virtual ISelectQB<T> Offset(long skip)
-			=> AddOffsetClause(skip);
+		public virtual ISelectQB<T> Skip(long offset)
+			=> AddOffsetClause(offset, false);
+		public virtual ISelectQB<T> Offset(long offset)
+			=> AddOffsetClause(offset, true);
 
-		public virtual ISelectQB<T> Limit(long take)
-			=> AddLimitClause(take);
+		public virtual ISelectQB<T> Take(long limit, FetchNext fetchNext = FetchNext.RowsOnly)
+			=> AddLimitClause(limit, fetchNext, false);
+		public virtual ISelectQB<T> Limit(long limit, FetchNext fetchNext = FetchNext.RowsOnly)
+			=> AddLimitClause(limit, fetchNext, true);
 
-		private ISelectQB<T> AddOffsetClause(long skip)
+		private ISelectQB<T> AddOffsetClause(long offset, bool parametrized)
 		{
-			if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip));
+			if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
 
-			var skipSection = FindSectionClause(ClauseSections.Offset);
-			if (skipSection != null)
+			var offsetSection = FindSectionClause(ClauseSections.Offset);
+			if (offsetSection != null)
 			{
 				throw MakeExceptionSectionHasAlreadyBeenAdded(ClauseSections.Offset);
 			}
 
-			_context.Clause.Add(new OffsetSectionClause(skip));
+			_context.Clause.Add(new OffsetSectionClause(offset, parametrized));
 
 			return this;
 		}
 
-		private ISelectQB<T> AddLimitClause(long take)
+		private ISelectQB<T> AddLimitClause(long limit, FetchNext fetchNext, bool parametrized)
 		{
-			if (take < 0) throw new ArgumentOutOfRangeException(nameof(take));
+			if (limit < 0) throw new ArgumentOutOfRangeException(nameof(limit));
 
-			var takeSection = FindSectionClause(ClauseSections.Limit);
-			if (takeSection != null)
+			var fetchSection = FindSectionClause(ClauseSections.Fetch);
+			if (fetchSection != null)
 			{
-				throw MakeExceptionSectionHasAlreadyBeenAdded(ClauseSections.Limit);
+				throw MakeExceptionSectionHasAlreadyBeenAdded(ClauseSections.Fetch);
 			}
 
-			_context.Clause.Add(new LimitSectionClause(take));
+			_context.Clause.Add(new FetchSectionClause(limit, fetchNext, parametrized));
 
 			return this;
 		}

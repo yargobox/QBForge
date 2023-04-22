@@ -37,7 +37,21 @@ namespace QBForge.Provider.Clauses.PostgreSql
 					}
 				}
 
-				if (next) render.TryAppendLineOrAppendSpace(); else next = true;
+				if (next)
+				{
+					if (sectionKey == ClauseSections.Distinct || sectionKey == ClauseSections.WithTies)
+					{
+						render.Append(' ');
+					}
+					else
+					{
+						render.TryAppendLineOrAppendSpace();
+					}
+				}
+				else
+				{
+					next = true;
+				}
 
 				section.Render(context);
 			}
@@ -65,7 +79,7 @@ namespace QBForge.Provider.Clauses.PostgreSql
 			ClauseSections.GroupBy,
 			ClauseSections.Having,
 			ClauseSections.OrderBy,
-			ClauseSections.Limit,
+			ClauseSections.Fetch,
 			ClauseSections.Offset,
 			ClauseSections.WithTies,
 			ClauseSections.Options,

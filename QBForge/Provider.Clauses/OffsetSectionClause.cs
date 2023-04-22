@@ -6,7 +6,7 @@ namespace QBForge.Provider.Clauses
 	{
 		public override string? Key => ClauseSections.Offset;
 
-		public OffsetSectionClause(long offset) : this(new ConstClause<long>(offset)) { }
+		public OffsetSectionClause(long offset, bool parametrized) : this(parametrized ? new ParameterClause(offset) : new ConstClause<long>(offset)) { }
 		protected OffsetSectionClause(Clause clause) : base(clause) { }
 
 		public override void Render(IBuildQueryContext context)
@@ -19,12 +19,32 @@ namespace QBForge.Provider.Clauses
 			{
 				render.Append(longLeft.Value.ToString(CultureInfo.InvariantCulture));
 			}
+			else if (Left is ParameterClause paramLeft)
+			{
+				render.Append(render.MakeParamPlaceholder(paramLeft.Value));
+			}
 			else
 			{
 				Left.Render(context);
 			}
 
-			//render.Append(" ROWS");
+			render.Append(" ROWS");
+		}
+
+		public override string ToString()
+		{
+			if (Left is ConstClause<long> longLeft)
+			{
+				return $"OFFSET {longLeft.Value} ROWS";
+			}
+			else if (Left is ParameterClause paramLeft)
+			{
+				return $"OFFSET $?(={paramLeft.Value}) ROWS";
+			}
+			else
+			{
+				return string.Concat("OFFSET ", Left.ToString(), " ROWS");
+			}
 		}
 
 		public override Clause Clone()

@@ -12,7 +12,7 @@
 		public const string GroupBy = nameof(GroupBy);
 		public const string Having = nameof(Having);
 		public const string OrderBy = nameof(OrderBy);
-		public const string Limit = nameof(Limit);
+		public const string Fetch = nameof(Fetch);
 		public const string Offset = nameof(Offset);
 		public const string WithTies = nameof(WithTies);
 		public const string Options = nameof(Options);

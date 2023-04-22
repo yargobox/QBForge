@@ -3,11 +3,20 @@ using System.Linq.Expressions;
 
 namespace QBForge.Provider
 {
+	public enum FetchNext
+	{
+		RowsOnly = 0,
+		RowsWithTies = 1,
+		Percent = 2
+	}
+
 	public interface ISelectQB<T> : IQueryBuilder<T>
 	{
 #pragma warning disable CA1716
 
 		ISelectQB<T> From(string tableName, string? labelAs = null, dynamic? parameters = null);
+
+		ISelectQB<T> Distinct();
 
 		ISelectQB<T> With<TCte>(string labelCte, ISelectQB<TCte> subQuery);
 
@@ -49,8 +58,6 @@ namespace QBForge.Provider
 		ISelectQB<T> CrossJoin<TJoined>(ISelectQB<TJoined> subQuery, string labelAs);
 		ISelectQB<T> CrossJoin<TJoined>(string tableName, string labelAs);
 
-		ISelectQB<T> Distinct();
-
 		ISelectQB<T> Union(ISelectQB<T> query);
 		ISelectQB<T> UnionAll(ISelectQB<T> query);
 		ISelectQB<T> Intersect(ISelectQB<T> query);
@@ -85,8 +92,29 @@ namespace QBForge.Provider
 		ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
 		ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
 
-		ISelectQB<T> Offset(long skip);
-		ISelectQB<T> Limit(long take);
+		/// <summary>
+		/// Adds clause "OFFSET <paramref name="offset"/> ROWS", where <paramref name="offset"/> is hardcoded to the query as a const literal value
+		/// </summary>
+		/// <remarks>Use <see cref="Offset"/> if you need a parameterized request</remarks>
+		ISelectQB<T> Skip(long offset);
+
+		/// <summary>
+		/// Adds clause "OFFSET $param ROWS", where $param is a parameter with the value <paramref name="offset"/>
+		/// </summary>
+		/// <remarks>Use <see cref="Skip"/> if you need a non-parameterized request</remarks>
+		ISelectQB<T> Offset(long offset);
+
+		/// <summary>
+		/// Adds clause "LIMIT <paramref name="limit"/>" or "FETCH NEXT <paramref name="limit"/>", where <paramref name="limit"/> is hardcoded to the query as a const literal value
+		/// </summary>
+		/// <remarks>Use <see cref="Limit"/> if you need a parameterized request</remarks>
+		ISelectQB<T> Take(long limit, FetchNext fetchNext = FetchNext.RowsOnly);
+
+		/// <summary>
+		/// Adds clause "LIMIT $param" or "FETCH NEXT $param", where $param is a parameter with the value <paramref name="limit"/>
+		/// </summary>
+		/// <remarks>Use <see cref="Take"/> if you need a non-parameterized request</remarks>
+		ISelectQB<T> Limit(long limit, FetchNext fetchNext = FetchNext.RowsOnly);
 
 		ISelectQB<T> Map(Func<T, T> map);
 		ISelectQB<T> Map<TSecond>(Func<T, TSecond, T> map);

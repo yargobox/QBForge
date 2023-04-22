@@ -40,7 +40,14 @@ namespace QBForge.Provider
 			return this;
 		}
 
-		public virtual ISelectQB<T> Distinct() => this;
+		public virtual ISelectQB<T> Distinct()
+		{
+			if (FindSectionClause(ClauseSections.Distinct) is null)
+			{
+				_context.Clause.Add(DistinctSectionClause.Default);
+			}
+			return this;
+		}
 
 		public virtual ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
 		public virtual ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
