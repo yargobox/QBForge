@@ -39,7 +39,7 @@ namespace QBForge.Provider.Clauses.PostgreSql
 
 				if (next)
 				{
-					if (sectionKey == ClauseSections.Distinct || sectionKey == ClauseSections.WithTies)
+					if (sectionKey == ClauseSections.Distinct)
 					{
 						render.Append(' ');
 					}
@@ -79,9 +79,8 @@ namespace QBForge.Provider.Clauses.PostgreSql
 			ClauseSections.GroupBy,
 			ClauseSections.Having,
 			ClauseSections.OrderBy,
-			ClauseSections.Fetch,
 			ClauseSections.Offset,
-			ClauseSections.WithTies,
+			ClauseSections.Fetch,
 			ClauseSections.Options,
 			ClauseSections.Union
 		};

@@ -49,9 +49,6 @@ namespace QBForge.Provider
 			return this;
 		}
 
-		public virtual ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-		public virtual ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs) => this;
-
 		protected TSectionClause EnsureSectionClause<TSectionClause>(string section) where TSectionClause : Clause, new()
 		{
 			var sectionClause = _context.Clause.FirstOrDefault(x => x.Key == section);

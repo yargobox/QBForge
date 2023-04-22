@@ -45,7 +45,7 @@ namespace QBForge.Provider.Clauses
 
 				if (next)
 				{
-					if (sectionKey == ClauseSections.Distinct || sectionKey == ClauseSections.WithTies)
+					if (sectionKey == ClauseSections.Distinct)
 					{
 						render.Append(' ');
 					}
@@ -78,7 +78,6 @@ namespace QBForge.Provider.Clauses
 			ClauseSections.WithCte,
 			ClauseSections.Select,
 			ClauseSections.Distinct,
-			ClauseSections.WithTies,
 			ClauseSections.Include,
 			ClauseSections.From,
 			ClauseSections.Join,
@@ -86,8 +85,8 @@ namespace QBForge.Provider.Clauses
 			ClauseSections.GroupBy,
 			ClauseSections.Having,
 			ClauseSections.OrderBy,
-			ClauseSections.Fetch,
 			ClauseSections.Offset,
+			ClauseSections.Fetch,
 			ClauseSections.Options,
 			ClauseSections.Union
 		};

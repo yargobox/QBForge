@@ -89,8 +89,22 @@ namespace QBForge.Provider
 		ISelectQB<T> GroupBy(Expression<Func<T, object?>> lhs);
 		ISelectQB<T> GroupBy<T2>(Expression<Func<T2, object?>> lhs);
 
-		ISelectQB<T> Having(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
-		ISelectQB<T> Having<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having(Expression<Func<T, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrHaving(Expression<Func<T, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> Having<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> OrHaving<T2>(Expression<Func<T2, object?>> lhs, UnaryOperator op);
+		ISelectQB<T> Having<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrHaving<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrHaving(Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> Having<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> OrHaving<T2>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T, object?>> rhs);
+		ISelectQB<T> Having<T2, T3>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T3, object?>> rhs);
+		ISelectQB<T> OrHaving<T2, T3>(Expression<Func<T2, object?>> lhs, BinaryOperator op, Expression<Func<T3, object?>> rhs);
+		ISelectQB<T> HavingComputed(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrHavingComputed(UnaryAggrHandler ag, Expression<Func<T, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> HavingComputed<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
+		ISelectQB<T> OrHavingComputed<T2>(UnaryAggrHandler ag, Expression<Func<T2, object?>> lhs, BinaryOperator op, dynamic rhs);
 
 		/// <summary>
 		/// Adds clause "OFFSET <paramref name="offset"/> ROWS", where <paramref name="offset"/> is hardcoded to the query as a const literal value

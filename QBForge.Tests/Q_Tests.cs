@@ -23,6 +23,20 @@ namespace QBForge.Tests
 		}
 
 		[Fact]
+		public void SelectHaving()
+		{
+			var q = QB
+				.Select<Product>("products", "p")
+					.Include(p => p.BrandId)
+				.GroupBy(p => p.BrandId)
+				.HavingComputed(Ag.MIN, p => p.Price, Op.Greater, 100.00)
+				.OrHavingComputed(Ag.MAX, p => p.Price, Op.Greater, 1000);
+			
+			var sql = q.ToString(ReadabilityLevels.High);
+			_ = sql.Length;
+		}
+
+		[Fact]
 		public void Select()
 		{
 			string? sql;
@@ -79,7 +93,7 @@ namespace QBForge.Tests
 					QB.Select<Product>("products")
 						.Include(_ => _.BrandId)
 					.GroupBy(_ => _.BrandId)
-					.Having(Ag.MIN, _ => _.Price, Op.Greater, 200.00)
+					.HavingComputed(Ag.MIN, _ => _.Price, Op.Greater, 200.00)
 				)
 				.Select<Product>("products", "p")
 				.Join<Product>("expensiveBrands", "expensiveBrands")
@@ -95,7 +109,7 @@ namespace QBForge.Tests
 					QB.Select<Product>("products")
 						.Include(_ => _.BrandId)
 					.GroupBy(_ => _.BrandId)
-					.Having(Ag.MIN, _ => _.Price, Op.Greater, 200.00),
+					.HavingComputed(Ag.MIN, _ => _.Price, Op.Greater, 200.00),
 					"expensiveBrands"
 				)
 					.On<Product>(expensiveBrands => expensiveBrands.BrandId, Op.Equal, p => p.BrandId)
@@ -106,7 +120,7 @@ namespace QBForge.Tests
 			QB.Select<Product>("products", "p")
 				.Include(p => p.BrandId)
 			.GroupBy(p => p.BrandId)
-			.Having(Ag.MIN, p => p.Price, Op.Greater, 100.00);
+			.HavingComputed(Ag.MIN, p => p.Price, Op.Greater, 100.00);
 
 			// Current version
 			q = QB.Select<Product>("products", "p").IncludeComputed(Ag.AVG, p => p.Price, "AveragePrice").Where(p => p.GroupId, Op.Equal, 8);
